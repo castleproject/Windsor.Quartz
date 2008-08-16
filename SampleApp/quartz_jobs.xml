@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<quartz xmlns="http://quartznet.sourceforge.net/JobSchedulingData"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 				version="1.0"
+				overwrite-existing-jobs="true">
+	<job>
+		<job-detail>
+			<name>hello-world</name>
+			<job-type>SampleApp.SampleJob, SampleApp</job-type>
+			<durable>true</durable>
+		</job-detail>
+		<trigger>
+			<simple>
+				<name>sample-trigger</name>
+				<job-name>hello-world</job-name>
+        <start-time>1982-06-28T12:24:00.0Z</start-time>
+				<repeat-count>-1</repeat-count>
+				<repeat-interval>2000</repeat-interval> <!-- 2 seconds -->
+			</simple>
+		</trigger>
+	</job>
+</quartz>
