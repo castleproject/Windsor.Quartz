@@ -14,6 +14,17 @@ namespace QuartzNetIntegration {
 		private readonly NameValueCollection properties = new NameValueCollection();
 		public bool WaitForJobsToCompleteAtShutdown { get; set; }
 
+		public IJobListener[] SetGlobalJobListeners {
+			set {
+				foreach (var jobListener in value)
+					scheduler.AddGlobalJobListener(jobListener);
+			}
+		}
+
+		public IList GlobalJobListeners {
+			get { return scheduler.GlobalJobListeners; }
+		}
+
 		public QuartzNetScheduler(IDictionary<string, string> props) {
 			foreach (var prop in props.Keys) {
 				properties[prop] = props[prop];
@@ -286,10 +297,6 @@ namespace QuartzNetIntegration {
 
 		public string[] CalendarNames {
 			get { return scheduler.CalendarNames; }
-		}
-
-		public IList GlobalJobListeners {
-			get { return scheduler.GlobalJobListeners; }
 		}
 
 		public ISet JobListenerNames {
