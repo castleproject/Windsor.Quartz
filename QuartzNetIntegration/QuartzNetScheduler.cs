@@ -21,6 +21,14 @@ namespace QuartzNetIntegration {
 			}
 		}
 
+		public ITriggerListener[] SetGlobalTriggerListeners {
+			set {
+				foreach (var triggerListener in value) {
+					scheduler.AddGlobalTriggerListener(triggerListener);
+				}
+			}
+		}
+
 		public IList GlobalJobListeners {
 			get { return scheduler.GlobalJobListeners; }
 		}
