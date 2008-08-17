@@ -20,8 +20,10 @@ namespace SampleApp {
 			Console.WriteLine(Name + ".TriggerComplete");
 		}
 
-		public string Name {
-			get { return GetType().Name; }
+		public string Name { get; set; }
+
+		public SampleTriggerListener() {
+			Name = GetType().Name;
 		}
 	}
 }

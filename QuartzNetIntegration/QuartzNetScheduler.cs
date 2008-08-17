@@ -51,6 +51,19 @@ namespace QuartzNetIntegration {
 			}
 		}
 
+		private readonly IDictionary<string, IList<ITriggerListener>> triggerListeners = new Dictionary<string, IList<ITriggerListener>>();
+
+		public IDictionary TriggerListeners {
+			set {
+				foreach (DictionaryEntry tl in value) {
+					foreach (ITriggerListener triggerListener in tl.Value as IList) {
+						scheduler.AddTriggerListener(triggerListener);
+					}
+					triggerListeners[tl.Key as string] = (tl.Value as IList).Cast<ITriggerListener>().ToList();
+				}
+			}
+		}
+
 		public IList GlobalJobListeners {
 			get { return scheduler.GlobalJobListeners; }
 		}
@@ -99,6 +112,12 @@ namespace QuartzNetIntegration {
 				var jobDetail = GetJobDetail(jobName.Key, null);
 				foreach (var jobListener in jobName.Value) {
 					jobDetail.AddJobListener(jobListener.Name);
+				}
+			}
+			foreach (var t in triggerListeners) {
+				var trigger = GetTrigger(t.Key, null);
+				foreach (var triggerListener in t.Value) {
+					trigger.AddTriggerListener(triggerListener.Name);
 				}
 			}
 		}
