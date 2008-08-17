@@ -108,24 +108,27 @@ namespace QuartzNetIntegration {
 
 		public void Start() {
 			scheduler.Start();
-			//scheduler.PauseAll();
-			//foreach (var jobName in jobListeners) {
-			//  var jobDetail = GetJobDetail(jobName.Key, null);
-			//  foreach (var jobListener in jobName.Value) {
-			//    jobDetail.AddJobListener(jobListener.Name);
-			//  }
-			//  //foreach (var t in scheduler.GetTriggersOfJob(jobDetail.Name, jobDetail.Group)) {
-			//  //  scheduler.DeleteJob(jobDetail.Name, jobDetail.Group);
-			//  //  scheduler.ScheduleJob(jobDetail, t);
-			//  //}
-			//}
-			//foreach (var t in triggerListeners) {
-			//  var trigger = GetTrigger(t.Key, null);
-			//  foreach (var triggerListener in t.Value) {
-			//    trigger.AddTriggerListener(triggerListener.Name);
-			//  }
-			//}
-			//scheduler.ResumeAll();
+			scheduler.PauseAll();
+			foreach (var jobName in jobListeners) {
+				var jobDetail = GetJobDetail(jobName.Key, null);
+				foreach (var jobListener in jobName.Value) {
+					jobDetail.AddJobListener(jobListener.Name);
+				}
+				foreach (var t in scheduler.GetTriggersOfJob(jobDetail.Name, jobDetail.Group)) {
+					scheduler.DeleteJob(jobDetail.Name, jobDetail.Group);
+					scheduler.ScheduleJob(jobDetail, t);
+				}
+			}
+			foreach (var t in triggerListeners) {
+				var trigger = GetTrigger(t.Key, null);
+				foreach (var triggerListener in t.Value) {
+					trigger.AddTriggerListener(triggerListener.Name);
+				}
+				var job = scheduler.GetJobDetail(trigger.JobName, trigger.JobGroup);
+				scheduler.DeleteJob(job.Name, job.Group);
+				scheduler.ScheduleJob(job, trigger);
+			}
+			scheduler.ResumeAll();
 		}
 
 		public void StartDelayed(TimeSpan delay) {
