@@ -15,8 +15,10 @@ namespace SampleApp {
 			Console.WriteLine(Name + ".JobWasExecuted");
 		}
 
-		public string Name {
-			get { return GetType().Name; }
+		public string Name { get; set; }
+
+		public SampleJobListener() {
+			Name = GetType().Name;
 		}
 	}
 }

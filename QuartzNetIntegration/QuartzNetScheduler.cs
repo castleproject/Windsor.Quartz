@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using Castle.Core;
 using Quartz;
 using Quartz.Collection;
@@ -37,17 +38,18 @@ namespace QuartzNetIntegration {
 			}
 		}
 
-		//public IDictionary JobListeners {
-		//  set {
-		//    foreach (DictionaryEntry jl in value) {
-		//      var jobDetail = GetJobDetail(jl.Key as string, null);
-		//      foreach (IJobListener jobListener in jl.Value as IList) {
-		//        scheduler.AddJobListener(jobListener);
-		//        jobDetail.AddJobListener(jobListener.Name);
-		//      }
-		//    }
-		//  }
-		//}
+		private readonly IDictionary<string, IList<IJobListener>> jobListeners = new Dictionary<string, IList<IJobListener>>();
+
+		public IDictionary JobListeners {
+			set {
+				foreach (DictionaryEntry jl in value) {
+					foreach (IJobListener jobListener in jl.Value as IList) {
+						scheduler.AddJobListener(jobListener);
+					}
+					jobListeners[jl.Key as string] = (jl.Value as IList).Cast<IJobListener>().ToList();
+				}
+			}
+		}
 
 		public IList GlobalJobListeners {
 			get { return scheduler.GlobalJobListeners; }
@@ -93,6 +95,12 @@ namespace QuartzNetIntegration {
 
 		public void Start() {
 			scheduler.Start();
+			foreach (var jobName in jobListeners) {
+				var jobDetail = GetJobDetail(jobName.Key, null);
+				foreach (var jobListener in jobName.Value) {
+					jobDetail.AddJobListener(jobListener.Name);
+				}
+			}
 		}
 
 		public void Stop() {
