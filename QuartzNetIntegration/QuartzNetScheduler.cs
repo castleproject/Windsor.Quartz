@@ -108,18 +108,28 @@ namespace QuartzNetIntegration {
 
 		public void Start() {
 			scheduler.Start();
-			foreach (var jobName in jobListeners) {
-				var jobDetail = GetJobDetail(jobName.Key, null);
-				foreach (var jobListener in jobName.Value) {
-					jobDetail.AddJobListener(jobListener.Name);
-				}
-			}
-			foreach (var t in triggerListeners) {
-				var trigger = GetTrigger(t.Key, null);
-				foreach (var triggerListener in t.Value) {
-					trigger.AddTriggerListener(triggerListener.Name);
-				}
-			}
+			//scheduler.PauseAll();
+			//foreach (var jobName in jobListeners) {
+			//  var jobDetail = GetJobDetail(jobName.Key, null);
+			//  foreach (var jobListener in jobName.Value) {
+			//    jobDetail.AddJobListener(jobListener.Name);
+			//  }
+			//  //foreach (var t in scheduler.GetTriggersOfJob(jobDetail.Name, jobDetail.Group)) {
+			//  //  scheduler.DeleteJob(jobDetail.Name, jobDetail.Group);
+			//  //  scheduler.ScheduleJob(jobDetail, t);
+			//  //}
+			//}
+			//foreach (var t in triggerListeners) {
+			//  var trigger = GetTrigger(t.Key, null);
+			//  foreach (var triggerListener in t.Value) {
+			//    trigger.AddTriggerListener(triggerListener.Name);
+			//  }
+			//}
+			//scheduler.ResumeAll();
+		}
+
+		public void StartDelayed(TimeSpan delay) {
+			scheduler.StartDelayed(delay);
 		}
 
 		public void Stop() {
