@@ -29,6 +29,26 @@ namespace QuartzNetIntegration {
 			}
 		}
 
+		public ISchedulerListener[] SetSchedulerListeners {
+			set {
+				foreach (var schedulerListener in value) {
+					scheduler.AddSchedulerListener(schedulerListener);
+				}
+			}
+		}
+
+		//public IDictionary JobListeners {
+		//  set {
+		//    foreach (DictionaryEntry jl in value) {
+		//      var jobDetail = GetJobDetail(jl.Key as string, null);
+		//      foreach (IJobListener jobListener in jl.Value as IList) {
+		//        scheduler.AddJobListener(jobListener);
+		//        jobDetail.AddJobListener(jobListener.Name);
+		//      }
+		//    }
+		//  }
+		//}
+
 		public IList GlobalJobListeners {
 			get { return scheduler.GlobalJobListeners; }
 		}

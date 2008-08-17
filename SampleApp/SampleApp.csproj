@@ -59,6 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleJob.cs" />
     <Compile Include="SampleJobListener.cs" />
+    <Compile Include="SampleSchedulerListener.cs" />
     <Compile Include="SampleTriggerListener.cs" />
   </ItemGroup>
   <ItemGroup>

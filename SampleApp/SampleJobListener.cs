@@ -4,19 +4,19 @@ using Quartz;
 namespace SampleApp {
 	public class SampleJobListener : IJobListener {
 		public void JobToBeExecuted(JobExecutionContext context) {
-			Console.WriteLine("JobToBeExecuted");
+			Console.WriteLine(Name + ".JobToBeExecuted");
 		}
 
 		public void JobExecutionVetoed(JobExecutionContext context) {
-			Console.WriteLine("JobExecutionVetoed");
+			Console.WriteLine(Name + ".JobExecutionVetoed");
 		}
 
 		public void JobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-			Console.WriteLine("JobWasExecuted");
+			Console.WriteLine(Name + ".JobWasExecuted");
 		}
 
 		public string Name {
-			get { return "SampleJobListener"; }
+			get { return GetType().Name; }
 		}
 	}
 }
