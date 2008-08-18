@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzNetIntegration", "QuartzNetIntegration\QuartzNetIntegration.csproj", "{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rhino.Commons", "Rhino.Commons\Rhino.Commons.csproj", "{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "SampleApp\SampleApp.csproj", "{99278FD2-0461-489C-ACA2-29EDE4A28F0A}"
 EndProject
 Global
@@ -17,10 +15,6 @@ Global
 		{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99278FD2-0461-489C-ACA2-29EDE4A28F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99278FD2-0461-489C-ACA2-29EDE4A28F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99278FD2-0461-489C-ACA2-29EDE4A28F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU

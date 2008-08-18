@@ -3,13 +3,13 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  				version="1.0"
 				overwrite-existing-jobs="true">
-  <job-listener name="jobl" type="SampleApp.SampleJobListener, SampleApp"/>
+  <!--job-listener name="jobl" type="SampleApp.SampleJobListener, SampleApp"/-->
   <job>
 		<job-detail>
 			<name>hello-world</name>
 			<job-type>SampleApp.SampleJob, SampleApp</job-type>
 			<durable>true</durable>
-      <job-listener-ref>jobl</job-listener-ref>
+      <!--job-listener-ref>sampleJobListener</job-listener-ref-->
 		</job-detail>
 		<trigger>
 			<simple>

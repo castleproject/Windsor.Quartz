@@ -65,12 +65,6 @@
     <Compile Include="QuartzNetSimpleScheduler.cs" />
     <Compile Include="WindsorJobFactory.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rhino.Commons\Rhino.Commons.csproj">
-      <Project>{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}</Project>
-      <Name>Rhino.Commons</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

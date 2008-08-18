@@ -70,10 +70,6 @@
       <Project>{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}</Project>
       <Name>QuartzNetIntegration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Rhino.Commons\Rhino.Commons.csproj">
-      <Project>{53FEEF6A-ECEC-4D27-821A-8D351BC5CB2A}</Project>
-      <Name>Rhino.Commons</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="quartz_jobs.xml">

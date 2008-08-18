@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Castle.Core;
+using Castle.MicroKernel;
+using Castle.Windsor;
 using Quartz;
 using Quartz.Collection;
 using Quartz.Impl;
@@ -68,13 +70,13 @@ namespace QuartzNetIntegration {
 			get { return scheduler.GlobalJobListeners; }
 		}
 
-		public QuartzNetScheduler(IDictionary<string, string> props) {
+		public QuartzNetScheduler(IDictionary<string, string> props, IKernel kernel) {
 			foreach (var prop in props.Keys) {
 				properties[prop] = props[prop];
 			}
 			var sf = new StdSchedulerFactory(properties);
 			scheduler = sf.GetScheduler();
-			scheduler.JobFactory = new WindsorJobFactory();
+			scheduler.JobFactory = new WindsorJobFactory(kernel);
 			WaitForJobsToCompleteAtShutdown = true; // default
 		}
 
