@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using Castle.Core;
 using Castle.MicroKernel;
 using Castle.Windsor;
@@ -45,10 +44,12 @@ namespace QuartzNetIntegration {
 		public IDictionary JobListeners {
 			set {
 				foreach (DictionaryEntry jl in value) {
+				    var listeners = new List<IJobListener>();
 					foreach (IJobListener jobListener in jl.Value as IList) {
 						scheduler.AddJobListener(jobListener);
+                        listeners.Add(jobListener);
 					}
-					jobListeners[jl.Key as string] = (jl.Value as IList).Cast<IJobListener>().ToList();
+                    jobListeners[jl.Key as string] = listeners;
 				}
 			}
 		}
@@ -58,10 +59,12 @@ namespace QuartzNetIntegration {
 		public IDictionary TriggerListeners {
 			set {
 				foreach (DictionaryEntry tl in value) {
+                    var listeners = new List<ITriggerListener>();
 					foreach (ITriggerListener triggerListener in tl.Value as IList) {
 						scheduler.AddTriggerListener(triggerListener);
+                        listeners.Add(triggerListener);
 					}
-					triggerListeners[tl.Key as string] = (tl.Value as IList).Cast<ITriggerListener>().ToList();
+				    triggerListeners[tl.Key as string] = listeners;
 				}
 			}
 		}

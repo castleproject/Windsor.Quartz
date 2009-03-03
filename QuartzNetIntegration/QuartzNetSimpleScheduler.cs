@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Quartz;
 
 namespace QuartzNetIntegration {
@@ -27,10 +26,10 @@ namespace QuartzNetIntegration {
 		}
 
 		public ICollection<string> GetExecutingJobs() {
-			return scheduler.GetCurrentlyExecutingJobs()
-				.Cast<JobExecutionContext>()
-				.Select(c => c.JobDetail.Name)
-				.ToList();
+		    var r = new List<string>();
+            foreach (JobExecutionContext j in scheduler.GetCurrentlyExecutingJobs())
+                r.Add(j.JobDetail.Name);
+		    return r;
 		}
 
 		public void PauseAll() {

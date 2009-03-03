@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzNetIntegration", "Qua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "SampleApp\SampleApp.csproj", "{99278FD2-0461-489C-ACA2-29EDE4A28F0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzNetIntegration.Tests", "QuartzNetIntegration.Tests\QuartzNetIntegration.Tests.csproj", "{26134936-1662-4268-ABF0-6F40279A7AA6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{99278FD2-0461-489C-ACA2-29EDE4A28F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99278FD2-0461-489C-ACA2-29EDE4A28F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99278FD2-0461-489C-ACA2-29EDE4A28F0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26134936-1662-4268-ABF0-6F40279A7AA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26134936-1662-4268-ABF0-6F40279A7AA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26134936-1662-4268-ABF0-6F40279A7AA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26134936-1662-4268-ABF0-6F40279A7AA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
