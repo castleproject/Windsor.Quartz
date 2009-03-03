@@ -73,13 +73,13 @@ namespace QuartzNetIntegration {
 			get { return scheduler.GlobalJobListeners; }
 		}
 
-		public QuartzNetScheduler(IDictionary<string, string> props, IKernel kernel) {
+		public QuartzNetScheduler(IDictionary<string, string> props, IJobFactory jobFactory) {
 			foreach (var prop in props.Keys) {
 				properties[prop] = props[prop];
 			}
 			var sf = new StdSchedulerFactory(properties);
 			scheduler = sf.GetScheduler();
-			scheduler.JobFactory = new WindsorJobFactory(kernel);
+			scheduler.JobFactory = jobFactory;
 			WaitForJobsToCompleteAtShutdown = true; // default
 		}
 
