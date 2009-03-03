@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Quartz;
 
-namespace QuartzNetIntegration {
+namespace Castle.Facilities.QuartzIntegration {
 	public class QuartzNetSimpleScheduler : IJobScheduler {
 		private readonly IScheduler scheduler;
 

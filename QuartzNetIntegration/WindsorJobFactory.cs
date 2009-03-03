@@ -2,7 +2,7 @@ using Castle.MicroKernel;
 using Quartz;
 using Quartz.Spi;
 
-namespace QuartzNetIntegration {
+namespace Castle.Facilities.QuartzIntegration {
 	public class WindsorJobFactory : IJobFactory {
 		private readonly IKernel kernel;
 

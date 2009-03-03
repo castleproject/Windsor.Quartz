@@ -3,14 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Castle.Core;
-using Castle.MicroKernel;
-using Castle.Windsor;
 using Quartz;
 using Quartz.Collection;
 using Quartz.Impl;
 using Quartz.Spi;
 
-namespace QuartzNetIntegration {
+namespace Castle.Facilities.QuartzIntegration {
 	public class QuartzNetScheduler : IScheduler, IStartable, IDisposable {
 		private readonly IScheduler scheduler;
 		private readonly NameValueCollection properties = new NameValueCollection();

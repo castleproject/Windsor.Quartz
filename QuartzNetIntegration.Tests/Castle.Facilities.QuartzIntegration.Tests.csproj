@@ -8,8 +8,8 @@
     <ProjectGuid>{26134936-1662-4268-ABF0-6F40279A7AA6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QuartzNetIntegration.Tests</RootNamespace>
-    <AssemblyName>QuartzNetIntegration.Tests</AssemblyName>
+    <RootNamespace>Castle.Facilities.QuartzIntegration.Tests</RootNamespace>
+    <AssemblyName>Castle.Facilities.QuartzIntegration.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -77,9 +77,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QuartzNetIntegration\QuartzNetIntegration.csproj">
+    <ProjectReference Include="..\QuartzNetIntegration\Castle.Facilities.QuartzIntegration.csproj">
       <Project>{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}</Project>
-      <Name>QuartzNetIntegration</Name>
+      <Name>Castle.Facilities.QuartzIntegration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

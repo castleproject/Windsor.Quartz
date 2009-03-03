@@ -6,14 +6,14 @@ using Castle.Windsor;
 using NUnit.Framework;
 using Quartz;
 
-namespace QuartzNetIntegration.Tests {
+namespace Castle.Facilities.QuartzIntegration.Tests {
     [TestFixture]
     public class FacilityTests {
         [Test]
         [ExpectedException(typeof (FacilityException))]
         public void NoConfig_throws() {
             var c = new WindsorContainer();
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
         }
 
         [Test]
@@ -21,16 +21,16 @@ namespace QuartzNetIntegration.Tests {
         public void NoProps_throws() {
             var c = new WindsorContainer();
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", new MutableConfiguration("facility"));
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
         }
 
         [Test]
         public void Basic() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
-            config.CreateChild("quartzNet").CreateChild("item", "qwe").Attribute("key", "qq");
+            config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
             c.Resolve<IJobScheduler>();
             c.Resolve<IScheduler>();
         }
@@ -40,10 +40,10 @@ namespace QuartzNetIntegration.Tests {
         public void GlobalJobListeners_with_no_registration_throws() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
-            config.CreateChild("quartzNet").CreateChild("item", "qwe").Attribute("key", "qq");
+            config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
             config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
             c.Resolve<IScheduler>();
         }
 
@@ -51,12 +51,12 @@ namespace QuartzNetIntegration.Tests {
         public void GlobalJobListeners() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
-            config.CreateChild("quartzNet").CreateChild("item", "qwe").Attribute("key", "qq");
+            config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
             config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
 
             c.AddComponent("jobli", typeof (IJobListener), typeof (SomeJobListener));
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
             var scheduler = c.Resolve<IScheduler>() as QuartzNetScheduler;
             foreach (IJobListener l in scheduler.GlobalJobListeners)
                 Console.WriteLine(l.Name);
@@ -67,12 +67,12 @@ namespace QuartzNetIntegration.Tests {
         public void GlobalTriggerListeners() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
-            config.CreateChild("quartzNet").CreateChild("item", "qwe").Attribute("key", "qq");
+            config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
             config.CreateChild("globalTriggerListeners").CreateChild("item", "${jobli}");
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
 
             c.AddComponent("jobli", typeof (ITriggerListener), typeof (SomeTriggerListener));
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
 
             var scheduler = c.Resolve<IScheduler>() as QuartzNetScheduler;
             foreach (ITriggerListener l in scheduler.GlobalTriggerListeners)
@@ -84,7 +84,7 @@ namespace QuartzNetIntegration.Tests {
         public void JobListeners() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
-            config.CreateChild("quartzNet").CreateChild("item", "qwe").Attribute("key", "qq");
+            config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
             var listenerConfig = config.CreateChild("jobListeners");
             listenerConfig
                 .CreateChild("job")
@@ -93,7 +93,7 @@ namespace QuartzNetIntegration.Tests {
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
 
             c.AddComponent("jobli", typeof (IJobListener), typeof (SomeJobListener));
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
 
             var scheduler = c.Resolve<IScheduler>() as QuartzNetScheduler;
             foreach (var l in scheduler.JobListenerNames)
@@ -106,7 +106,7 @@ namespace QuartzNetIntegration.Tests {
         public void TriggerListeners() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
-            config.CreateChild("quartzNet").CreateChild("item", "qwe").Attribute("key", "qq");
+            config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
             var listenerConfig = config.CreateChild("triggerListeners");
             listenerConfig
                 .CreateChild("job")
@@ -115,7 +115,7 @@ namespace QuartzNetIntegration.Tests {
             c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
 
             c.AddComponent("trigli", typeof(ITriggerListener), typeof(SomeTriggerListener));
-            c.AddFacility("quartz", new QuartzNetFacility());
+            c.AddFacility("quartz", new QuartzFacility());
 
             var scheduler = c.Resolve<IScheduler>() as QuartzNetScheduler;
             foreach (var l in scheduler.TriggerListenerNames)

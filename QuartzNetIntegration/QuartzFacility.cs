@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Castle.Core.Configuration;
+﻿using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Quartz;
 using Quartz.Job;
 using Quartz.Spi;
 
-namespace QuartzNetIntegration {
-    public class QuartzNetFacility : AbstractFacility {
+namespace Castle.Facilities.QuartzIntegration {
+    public class QuartzFacility : AbstractFacility {
         protected override void Init() {
             Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
             AddComponent<IScheduler, QuartzNetScheduler>();
@@ -19,10 +17,10 @@ namespace QuartzNetIntegration {
         internal IConfiguration BuildConfig(IConfiguration config) {
             if (config == null)
                 throw new FacilityException("Please define the configuration for Quartz.Net facility");
-            var quartzNet = config.Children["quartzNet"];
+            var quartzNet = config.Children["quartz"];
             if (quartzNet == null)
                 throw new FacilityException("Please define the Quartz.Net properties");
-            var componentConfig = new MutableConfiguration(typeof(QuartzNetScheduler).AssemblyQualifiedName);
+            var componentConfig = new MutableConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName);
             var parameters = componentConfig.CreateChild("parameters");
             BuildProps(quartzNet, parameters.CreateChild("props"));
 
@@ -52,7 +50,7 @@ namespace QuartzNetIntegration {
         internal void BuildServiceDictionary<K, V>(IConfiguration config, MutableConfiguration parameters) {
             var dict = parameters.CreateChild("dictionary");
             dict.Attribute("keyType", typeof (K).AssemblyQualifiedName);
-            dict.Attribute("valueType", typeof(V).AssemblyQualifiedName);
+            dict.Attribute("valueType", typeof (V).AssemblyQualifiedName);
             foreach (IConfiguration c in config.Children) {
                 var job = dict.CreateChild("entry")
                     .Attribute("key", c.Attributes["name"]);
@@ -65,12 +63,12 @@ namespace QuartzNetIntegration {
             array.Attribute("type", typeof (T).AssemblyQualifiedName);
             foreach (IConfiguration c in config.Children) {
                 array.CreateChild("item", c.Value);
-            }            
+            }
         }
 
         internal void BuildServiceArray<T>(IConfiguration config, MutableConfiguration parameters) {
             var array = parameters.CreateChild("array");
-            array.Attribute("type", typeof(T).AssemblyQualifiedName);
+            array.Attribute("type", typeof (T).AssemblyQualifiedName);
             foreach (IConfiguration c in config.Children) {
                 array.CreateChild("item", c.Value);
             }

@@ -70,9 +70,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QuartzNetIntegration\QuartzNetIntegration.csproj">
+    <ProjectReference Include="..\QuartzNetIntegration\Castle.Facilities.QuartzIntegration.csproj">
       <Project>{C0056BBC-DCE4-4F05-8EAC-4DEB2EAFA90A}</Project>
-      <Name>QuartzNetIntegration</Name>
+      <Name>Castle.Facilities.QuartzIntegration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
