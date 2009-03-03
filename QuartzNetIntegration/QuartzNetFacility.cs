@@ -42,6 +42,10 @@ namespace QuartzNetIntegration {
             if (triggerListeners != null)
                 BuildServiceDictionary<string, ITriggerListener[]>(triggerListeners, parameters.CreateChild("triggerListeners"));
 
+            var schedulerListeners = config.Children["schedulerListeners"];
+            if (schedulerListeners != null)
+                BuildServiceArray<ISchedulerListener>(schedulerListeners, parameters.CreateChild("SetSchedulerListeners"));
+
             return componentConfig;
         }
 
