@@ -8,10 +8,10 @@ namespace Castle.Facilities.QuartzIntegration {
     public class QuartzFacility : AbstractFacility {
         protected override void Init() {
             Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
-            AddComponent<IScheduler, QuartzNetScheduler>();
+            AddComponent<FileScanJob>();
             AddComponent<IJobScheduler, QuartzNetSimpleScheduler>();
             AddComponent<IJobFactory, WindsorJobFactory>();
-            AddComponent<FileScanJob>();
+            AddComponent<IScheduler, QuartzNetScheduler>();
         }
 
         internal IConfiguration BuildConfig(IConfiguration config) {
