@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Quartz;
 
@@ -9,7 +10,11 @@ namespace Castle.Facilities.QuartzIntegration {
 			this.scheduler = scheduler;
 		}
 
-		public bool DeleteJob(string jobName) {
+	    public void ResumeJob(string jobName) {
+            scheduler.ResumeJob(jobName, null);
+	    }
+
+	    public bool DeleteJob(string jobName) {
 			return scheduler.DeleteJob(jobName, null);
 		}
 
@@ -17,7 +22,12 @@ namespace Castle.Facilities.QuartzIntegration {
 			return scheduler.Interrupt(jobName, null);
 		}
 
-		public ICollection<string> GetJobNames() {
+	    public TriggerState GetJobStatus(string jobName) {
+	        var triggerName = scheduler.GetTriggersOfJob(jobName, null)[0].Name;
+	        return scheduler.GetTriggerState(triggerName, null);
+	    }
+
+	    public ICollection<string> GetJobNames() {
 			return scheduler.GetJobNames(null);
 		}
 
