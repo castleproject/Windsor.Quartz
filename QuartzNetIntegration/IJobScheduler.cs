@@ -2,6 +2,9 @@
 using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration {
+    /// <summary>
+    /// Light-weight job scheduler
+    /// </summary>
     public interface IJobScheduler {
         ICollection<string> GetJobNames();
 
