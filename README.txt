@@ -1,0 +1,1 @@
+More information about this facility: http://bugsquash.blogspot.com/2009/03/windsor-facility-for-quartznet.html
