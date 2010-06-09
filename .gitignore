@@ -1,0 +1,7 @@
+*/bin
+*/obj
+*.user
+*.suo
+*.cache
+_ReSharper*
+_UpgradeReport_Files
