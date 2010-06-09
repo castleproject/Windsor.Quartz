@@ -47,7 +47,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz, Version=0.9.1.2, Culture=neutral, PublicKeyToken=4103d14a2b9fd8bf, processorArchitecture=MSIL">
+    <Reference Include="Quartz, Version=1.0.2.3, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Quartz.dll</HintPath>
     </Reference>

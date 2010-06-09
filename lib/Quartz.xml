@@ -2045,71 +2045,21 @@
             </summary>
             <value>The table prefix.</value>
         </member>
-        <member name="T:Quartz.Impl.AdoJobStore.FiredTriggerRecord">
+        <member name="T:Quartz.Impl.AdoJobStore.FirebirdDelegate">
             <summary>
-            Conveys the state of a fired-trigger record.
+            A FirebirdDelegate specific driver delegate.
             </summary>
+            <author>Marko Lahma</author>
+        </member>
+        <member name="T:Quartz.Impl.AdoJobStore.StdAdoDelegate">
+            <summary>
+            This is meant to be an abstract base class for most, if not all, <see cref="T:Quartz.Impl.AdoJobStore.IDriverDelegate"/>
+            implementations. Subclasses should override only those methods that need
+            special handling for the DBMS driver in question.
+            </summary>
+            <author><a href="mailto:jeff@binaryfeed.org">Jeffrey Wescott</a></author>
             <author>James House</author>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.FireInstanceId">
-            <summary>
-            Gets or sets the fire instance id.
-            </summary>
-            <value>The fire instance id.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.FireTimestamp">
-            <summary>
-            Gets or sets the fire timestamp.
-            </summary>
-            <value>The fire timestamp.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.JobIsStateful">
-            <summary>
-            Gets or sets a value indicating whether [job is stateful].
-            </summary>
-            <value><c>true</c> if [job is stateful]; otherwise, <c>false</c>.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.JobKey">
-            <summary>
-            Gets or sets the job key.
-            </summary>
-            <value>The job key.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.SchedulerInstanceId">
-            <summary>
-            Gets or sets the scheduler instance id.
-            </summary>
-            <value>The scheduler instance id.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.TriggerKey">
-            <summary>
-            Gets or sets the trigger key.
-            </summary>
-            <value>The trigger key.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.FireInstanceState">
-            <summary>
-            Gets or sets the state of the fire instance.
-            </summary>
-            <value>The state of the fire instance.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.JobRequestsRecovery">
-            <summary>
-            Gets or sets a value indicating whether [job requests recovery].
-            </summary>
-            <value><c>true</c> if [job requests recovery]; otherwise, <c>false</c>.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.TriggerIsVolatile">
-            <summary>
-            Gets or sets a value indicating whether [trigger is volatile].
-            </summary>
-            <value><c>true</c> if [trigger is volatile]; otherwise, <c>false</c>.</value>
-        </member>
-        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.Priority">
-            <summary>
-            Gets or sets the priority.
-            </summary>
-            <value>The priority.</value>
+            <author>Marko Lahma (.NET)</author>
         </member>
         <member name="T:Quartz.Impl.AdoJobStore.IDriverDelegate">
             <summary>
@@ -2930,7 +2880,7 @@
             <param name="conn">The conn.</param>
             <param name="noLaterThan">highest value of <see cref="M:Quartz.Trigger.GetNextFireTimeUtc"/> of the triggers (exclusive)</param>
             <param name="noEarlierThan">highest value of <see cref="M:Quartz.Trigger.GetNextFireTimeUtc"/> of the triggers (inclusive)</param>
-            <returns>The next identifier of the next trigger to be fired.</returns>
+            <returns>A (never null, possibly empty) list of the identifiers (Key objects) of the next triggers to be fired.</returns>
         </member>
         <member name="M:Quartz.Impl.AdoJobStore.IDriverDelegate.SelectFiredTriggerInstanceNames(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
             <summary>
@@ -2964,6 +2914,1053 @@
             <param name="count">The count.</param>
             <param name="resultList">The result list.</param>
             <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
+            <summary>
+            Create new StdAdoDelegate instance.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
+            <summary>
+            Create new StdAdoDelegate instance.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+            <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStatesFromOtherStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
+            <summary>
+            Insert the job detail record.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="newState">the new state for the triggers</param>
+            <param name="oldState1">the first old state to update</param>
+            <param name="oldState2">the second old state to update</param>
+            <returns>number of rows updated</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.Int64)">
+            <summary>
+            Get the names of all of the triggers that have misfired.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="ts">The ts.</param>
+            <returns>an array of <see cref="T:Quartz.Util.Key"/> objects</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersInState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary> 
+            Select all of the triggers in a given state.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <param name="state">The state the triggers must be in</param>
+            <returns> an array of trigger <see cref="T:Quartz.Util.Key"/>s </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggersInState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.Int64)">
+            <summary>
+            Get the names of all of the triggers in the given state that have
+            misfired - according to the given timestamp.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <param name="state">The state.</param>
+            <param name="ts">The time stamp.</param>
+            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggersInStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.DateTime,System.Int32,System.Collections.IList)">
+            <summary>
+            Get the names of all of the triggers in the given states that have
+            misfired - according to the given timestamp.  No more than count will
+            be returned.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="state1">The state1.</param>
+            <param name="state2">The state2.</param>
+            <param name="ts">The ts.</param>
+            <param name="count">The most misfired triggers to return, negative for all</param>
+            <param name="resultList">
+            Output parameter.  A List of <see cref="T:Quartz.Util.Key"/> objects.  Must not be null
+            </param>
+            <returns>Whether there are more misfired triggers left to find beyond the given count.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.CountMisfiredTriggersInStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.DateTime)">
+            <summary>
+            Get the number of triggers in the given states that have
+            misfired - according to the given timestamp.
+            </summary>
+            <param name="conn"></param>
+            <param name="state1"></param>
+            <param name="state2"></param>
+            <param name="ts"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggersInGroupInState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.Int64)">
+            <summary>
+            Get the names of all of the triggers in the given group and state that
+            have misfired.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <param name="groupName">Name of the group.</param>
+            <param name="state">The state.</param>
+            <param name="ts">The timestamp.</param>
+            <returns>an array of <see cref="T:Quartz.Util.Key"/> objects</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersForRecoveringJobs(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select all of the triggers for jobs that are requesting recovery. The
+            returned trigger objects will have unique "recoverXXX" trigger names and
+            will be in the <see cref="F:Quartz.SchedulerConstants.DefaultRecoveryGroup"/>
+            trigger group.
+            </summary>
+            <remarks>
+            In order to preserve the ordering of the triggers, the fire time will be
+            set from the <i>ColumnFiredTime</i> column in the <i>TableFiredTriggers</i>
+            table. The caller is responsible for calling <see cref="M:Quartz.Trigger.ComputeFirstFireTimeUtc(Quartz.ICalendar)"/>
+            on each returned trigger. It is also up to the caller to insert the
+            returned triggers to ensure that they are fired.
+            </remarks>
+            <param name="conn">The DB Connection</param>
+            <returns> an array of <see cref="T:Quartz.Trigger"/> objects</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteFiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Delete all fired triggers.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <returns>The number of rows deleted.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteFiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Delete all fired triggers of the given instance.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <param name="instanceName">The instance id.</param>
+            <returns>The number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail)">
+            <summary>
+            Insert the job detail record.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="job">The job to insert.</param>
+            <returns>Number of rows inserted.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetDbBooleanValue(System.Boolean)">
+            <summary>
+            Gets the db presentation for boolean value. Subclasses can overwrite this behaviour.
+            </summary>
+            <param name="booleanValue">Value to map to database.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail)">
+            <summary>
+            Update the job detail record.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="job">The job to update.</param>
+            <returns>Number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerNamesForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Get the names of all of the triggers associated with the given job.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="jobName">The name of the job.</param>
+            <param name="groupName">The group containing the job.</param>
+            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteJobListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete all job listeners for the given job.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="jobName">The name of the job.</param>
+            <param name="groupName">The group containing the job.</param>
+            <returns>The number of rows deleted.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete the job detail record for the given job.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="jobName">the name of the job</param>
+            <param name="groupName">the group containing the job</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.IsJobStateful(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Check whether or not the given job is stateful.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="jobName">the name of the job</param>
+            <param name="groupName">the group containing the job</param>
+            <returns>
+            true if the job exists and is stateful, false otherwise
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.JobExists(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Check whether or not the given job exists.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="jobName">the name of the job</param>
+            <param name="groupName">the group containing the job</param>
+            <returns>true if the job exists, false otherwise</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateJobData(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail)">
+            <summary>
+            Update the job data map for the given job.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="job">the job to update</param>
+            <returns>the number of rows updated</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertJobListener(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail,System.String)">
+            <summary>
+            Associate a listener with a job.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="job">The job to associate with the listener.</param>
+            <param name="listener">The listener to insert.</param>
+            <returns>The number of rows inserted.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Get all of the listeners for a given job.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="jobName">The job name whose listeners are wanted.</param>
+            <param name="groupName">The group containing the job.</param>
+            <returns>Array of <see cref="T:System.String"/> listener names.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,Quartz.Spi.ITypeLoadHelper)">
+            <summary>
+            Select the JobDetail object for a given job name / group name.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="jobName">The job name whose listeners are wanted.</param>
+            <param name="groupName">The group containing the job.</param>
+            <param name="loadHelper">The load helper.</param>
+            <returns>The populated JobDetail object.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetMapFromProperties(System.Data.IDataReader,System.Int32)">
+            <summary> build Map from java.util.Properties encoding.</summary>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumJobs(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select the total number of jobs stored.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <returns>The total number of jobs stored.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select all of the job group names that are stored.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <returns>An array of <see cref="T:System.String"/> group names.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobsInGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Select all of the jobs contained in a given group.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="groupName">The group containing the jobs.</param>
+            <returns>An array of <see cref="T:System.String"/> job names.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String,Quartz.JobDetail)">
+            <summary>
+            Insert the base trigger data.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="trigger">the trigger to insert</param>
+            <param name="state">the state that the trigger should be stored in</param>
+            <param name="jobDetail">The job detail.</param>
+            <returns>the number of rows inserted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertSimpleTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.SimpleTrigger)">
+            <summary>
+            Insert the simple trigger data.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="trigger">The trigger to insert.</param>
+            <returns>The number of rows inserted.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertCronTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.CronTrigger)">
+            <summary>
+            Insert the cron trigger data.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="trigger">the trigger to insert</param>
+            <returns>the number of rows inserted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertBlobTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger)">
+            <summary>
+            Insert the blob trigger data.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="trigger">The trigger to insert.</param>
+            <returns>The number of rows inserted.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String,Quartz.JobDetail)">
+            <summary>
+            Update the base trigger data.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="trigger">The trigger to insert.</param>
+            <param name="state">The state that the trigger should be stored in.</param>
+            <param name="jobDetail">The job detail.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateSimpleTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.SimpleTrigger)">
+            <summary>
+            Update the simple trigger data.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="trigger">The trigger to insert.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateCronTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.CronTrigger)">
+            <summary>
+            Update the cron trigger data.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="trigger">The trigger to insert.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateBlobTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger)">
+            <summary>
+            Update the blob trigger data.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="trigger">The trigger to insert.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.TriggerExists(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Check whether or not a trigger exists.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="triggerName">The name of the trigger.</param>
+            <param name="groupName">The group containing the trigger.</param>
+            <returns>true if the trigger exists, false otherwise</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
+            <summary>
+            Update the state for a given trigger.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="triggerName">The name of the trigger.</param>
+            <param name="groupName">The group containing the trigger.</param>
+            <param name="state">The new state for the trigger.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStateFromOtherStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Update the given trigger to the given new state, if it is one of the
+            given old states.
+            </summary>
+            <param name="conn">The DB connection.</param>
+            <param name="triggerName">The name of the trigger.</param>
+            <param name="groupName">The group containing the trigger.</param>
+            <param name="newState">The new state for the trigger.</param>
+            <param name="oldState1">One of the old state the trigger must be in.</param>
+            <param name="oldState2">One of the old state the trigger must be in.</param>
+            <param name="oldState3">One of the old state the trigger must be in.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStateFromOtherStatesBeforeTime(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.Int64)">
+            <summary>
+            Update the all triggers to the given new state, if they are in one of
+            the given old states AND its next fire time is before the given time.
+            </summary>
+            <param name="conn">The DB connection</param>
+            <param name="newState">The new state for the trigger</param>
+            <param name="oldState1">One of the old state the trigger must be in</param>
+            <param name="oldState2">One of the old state the trigger must be in</param>
+            <param name="time">The time before which the trigger's next fire time must be</param>
+            <returns>int the number of rows updated</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerGroupStateFromOtherStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Update all triggers in the given group to the given new state, if they
+            are in one of the given old states.
+            </summary>
+            <param name="conn">The DB connection.</param>
+            <param name="groupName">The group containing the trigger.</param>
+            <param name="newState">The new state for the trigger.</param>
+            <param name="oldState1">One of the old state the trigger must be in.</param>
+            <param name="oldState2">One of the old state the trigger must be in.</param>
+            <param name="oldState3">One of the old state the trigger must be in.</param>
+            <returns>The number of rows updated.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStateFromOtherState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String)">
+            <summary>
+            Update the given trigger to the given new state, if it is in the given
+            old state.
+            </summary>
+            <param name="conn">the DB connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <param name="newState">the new state for the trigger</param>
+            <param name="oldState">the old state the trigger must be in</param>
+            <returns>int the number of rows updated</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerGroupStateFromOtherState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
+            <summary>
+            Update all of the triggers of the given group to the given new state, if
+            they are in the given old state.
+            </summary>
+            <param name="conn">the DB connection</param>
+            <param name="groupName">the group containing the triggers</param>
+            <param name="newState">the new state for the trigger group</param>
+            <param name="oldState">the old state the triggers must be in</param>
+            <returns>int the number of rows updated</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStatesForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
+            <summary>
+            Update the states of all triggers associated with the given job.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="jobName">the name of the job</param>
+            <param name="groupName">the group containing the job</param>
+            <param name="state">the new state for the triggers</param>
+            <returns>the number of rows updated</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStatesForJobFromOtherState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String)">
+            <summary>
+            Updates the state of the trigger states for job from other.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="jobName">Name of the job.</param>
+            <param name="groupName">Name of the group.</param>
+            <param name="state">The state.</param>
+            <param name="oldState">The old state.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteTriggerListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete all of the listeners associated with a given trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger whose listeners will be deleted</param>
+            <param name="groupName">the name of the group containing the trigger</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertTriggerListener(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String)">
+            <summary>
+            Associate a listener with the given trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="trigger">the trigger</param>
+            <param name="listener">the name of the listener to associate with the trigger</param>
+            <returns>the number of rows inserted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select the listeners associated with a given trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>
+            array of <see cref="T:System.String"/> trigger listener names
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteSimpleTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete the simple trigger data for a trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteCronTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete the cron trigger data for a trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteBlobTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete the cron trigger data for a trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Delete the base trigger data for a trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumTriggersForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select the number of triggers associated with a given job.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="jobName">the name of the job</param>
+            <param name="groupName">the group containing the job</param>
+            <returns>the number of triggers for the given job</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobForTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,Quartz.Spi.ITypeLoadHelper)">
+            <summary>
+            Select the job to which the trigger is associated.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <param name="loadHelper">The load helper.</param>
+            <returns>The <see cref="T:Quartz.JobDetail"/> object associated with the given trigger</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select the triggers for a job
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="jobName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>
+            an array of <see cref="T:Quartz.Trigger"/> objects
+            associated with a given job.
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersForCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Select the triggers for a calendar
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <param name="calName">Name of the calendar.</param>
+            <returns>
+            An array of <see cref="T:Quartz.Trigger"/> objects associated with a given job.
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectStatefulJobsOfTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Selects the stateful jobs of trigger group.
+            </summary>
+            <param name="conn">The database connection.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select a trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>The <see cref="T:Quartz.Trigger"/> object</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerJobDataMap(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select a trigger's JobDataMap.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>The <see cref="T:Quartz.JobDataMap"/> of the Trigger, never null, but possibly empty. </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select a trigger's state value.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>The <see cref="T:Quartz.Trigger"/> object</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerStatus(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select a trigger status (state and next fire time).
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="triggerName">the name of the trigger</param>
+            <param name="groupName">the group containing the trigger</param>
+            <returns>
+            a <see cref="T:Quartz.Util.TriggerStatus"/> object, or null
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select the total number of triggers stored.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <returns>the total number of triggers stored</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select all of the trigger group names that are stored.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <returns>
+            an array of <see cref="T:System.String"/> group names
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersInGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Select all of the triggers contained in a given group.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="groupName">the group containing the triggers</param>
+            <returns>
+            an array of <see cref="T:System.String"/> trigger names
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertPausedTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Inserts the paused trigger group.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeletePausedTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Deletes the paused trigger group.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteAllPausedTriggerGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Deletes all paused trigger groups.
+            </summary>
+            <param name="conn">The conn.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.IsTriggerGroupPaused(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Determines whether the specified trigger group is paused.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns>
+            	<c>true</c> if trigger group is paused; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.IsExistingTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Determines whether given trigger group already exists.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns>
+            	<c>true</c> if trigger group exists; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,Quartz.ICalendar)">
+            <summary>
+            Insert a new calendar.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="calendarName">The name for the new calendar.</param>
+            <param name="calendar">The calendar.</param>
+            <returns>the number of rows inserted</returns>
+            <throws>  IOException </throws>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,Quartz.ICalendar)">
+            <summary>
+            Update a calendar.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="calendarName">The name for the new calendar.</param>
+            <param name="calendar">The calendar.</param>
+            <returns>the number of rows updated</returns>
+            <throws>  IOException </throws>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.CalendarExists(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Check whether or not a calendar exists.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="calendarName">The name of the calendar.</param>
+            <returns>
+            true if the trigger exists, false otherwise
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Select a calendar.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="calendarName">The name of the calendar.</param>
+            <returns>the Calendar</returns>
+            <throws>  ClassNotFoundException </throws>
+            <throws>  IOException </throws>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.CalendarIsReferenced(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Check whether or not a calendar is referenced by any triggers.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="calendarName">The name of the calendar.</param>
+            <returns>
+            true if any triggers reference the calendar, false otherwise
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Delete a calendar.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="calendarName">The name of the trigger.</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumCalendars(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select the total number of calendars stored.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <returns>the total number of calendars stored</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectCalendars(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select all of the stored calendars.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <returns>
+            an array of <see cref="T:System.String"/> calendar names
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerForFireTime(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.DateTime)">
+            <summary>
+            Select the trigger that will be fired at the given fire time.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="fireTime">the time that the trigger will be fired</param>
+            <returns>
+            a <see cref="T:Quartz.Util.Key"/> representing the
+            trigger that will be fired at the given fire time, or null if no
+            trigger will be fired at that time
+            </returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerToAcquire(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.DateTime,System.DateTime)">
+            <summary>
+            Select the next trigger which will fire to fire between the two given timestamps
+            in ascending order of fire time, and then descending by priority.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="noLaterThan">highest value of <see cref="M:Quartz.Trigger.GetNextFireTimeUtc"/> of the triggers (exclusive)</param>
+            <param name="noEarlierThan">highest value of <see cref="M:Quartz.Trigger.GetNextFireTimeUtc"/> of the triggers (inclusive)</param>
+            <returns>A (never null, possibly empty) list of the identifiers (Key objects) of the next triggers to be fired.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            This can be overriden for a more performant, result limiting 
+            SQL. For Example SQL Server, MySQL and SQLite support limiting returned rows. 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertFiredTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String,Quartz.JobDetail)">
+            <summary>
+            Insert a fired trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="trigger">the trigger</param>
+            <param name="state">the state that the trigger should be stored in</param>
+            <param name="job">The job.</param>
+            <returns>the number of rows inserted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectFiredTriggerRecords(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select the states of all fired-trigger records for a given trigger, or
+            trigger group if trigger name is <see langword="null"/>.
+            </summary>
+            <param name="conn">The DB connection.</param>
+            <param name="triggerName">Name of the trigger.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns>a List of <see cref="T:Quartz.Impl.AdoJobStore.FiredTriggerRecord"/> objects.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectFiredTriggerRecordsByJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Select the states of all fired-trigger records for a given job, or job
+            group if job name is <see langword="null"/>.
+            </summary>
+            <param name="conn">The DB connection.</param>
+            <param name="jobName">Name of the job.</param>
+            <param name="groupName">Name of the group.</param>
+            <returns>a List of <see cref="T:Quartz.Impl.AdoJobStore.FiredTriggerRecord"/> objects.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectInstancesFiredTriggerRecords(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Select the states of all fired-trigger records for a given scheduler
+            instance.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <param name="instanceName">Name of the instance.</param>
+            <returns>A list of FiredTriggerRecord objects.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectFiredTriggerInstanceNames(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Select the distinct instance names of all fired-trigger records.
+            </summary>
+            <param name="conn">The conn.</param>
+            <returns></returns>
+            <remarks>
+            This is useful when trying to identify orphaned fired triggers (a
+            fired trigger without a scheduler state record.)
+            </remarks>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteFiredTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Delete a fired trigger.
+            </summary>
+            <param name="conn">the DB Connection</param>
+            <param name="entryId">the fired trigger entry to delete</param>
+            <returns>the number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobExecutionCount(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
+            <summary>
+            Selects the job execution count.
+            </summary>
+            <param name="conn">The DB connection.</param>
+            <param name="jobName">Name of the job.</param>
+            <param name="jobGroup">The job group.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteVolatileFiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Delete all volatile fired triggers.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <returns>The number of rows deleted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertSchedulerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.DateTime,System.TimeSpan)">
+            <summary>
+            Inserts the state of the scheduler.
+            </summary>
+            <param name="conn">The conn.</param>
+            <param name="instanceName">The instance id.</param>
+            <param name="checkInTime">The check in time.</param>
+            <param name="interval">The interval.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteSchedulerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            Deletes the state of the scheduler.
+            </summary>
+            <param name="conn">The database connection.</param>
+            <param name="instanceName">The instance id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateSchedulerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.DateTime)">
+            <summary>
+            Updates the state of the scheduler.
+            </summary>
+            <param name="conn">The database connection.</param>
+            <param name="instanceName">The instance id.</param>
+            <param name="checkInTime">The check in time.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectSchedulerStateRecords(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
+            <summary>
+            A List of all current <see cref="T:Quartz.Impl.AdoJobStore.SchedulerStateRecord"/>s.
+            <p>
+            If instanceId is not null, then only the record for the identified
+            instance will be returned.
+            </p>
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <param name="instanceName">The instance id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.ReplaceTablePrefix(System.String)">
+            <summary>
+            Replace the table prefix in a query by replacing any occurrences of
+            "{0}" with the table prefix.
+            </summary>
+            <param name="query">The unsubstitued query</param>
+            <returns>The query, with proper table prefix substituted</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SerializeObject(System.Object)">
+            <summary>
+            Create a serialized <see lanword="byte[]"/> version of an Object.
+            </summary>
+            <param name="obj">the object to serialize</param>
+            <returns>Serialized object as byte array.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SerializeJobData(Quartz.JobDataMap)">
+            <summary>
+            Remove the transient data from and then create a serialized <see cref="T:System.IO.MemoryStream"/>
+            version of a <see cref="T:Quartz.JobDataMap"/> and returns the underlying bytes.
+            </summary>
+            <param name="data">The data.</param>
+            <returns>the serialized data as byte array</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SerializeProperties(Quartz.JobDataMap)">
+            <summary>
+            serialize
+            </summary>
+            <param name="data">The data.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.ConvertFromProperty(System.Collections.Specialized.NameValueCollection)">
+            <summary> 
+            Convert the JobDataMap into a list of properties.
+            </summary>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.ConvertToProperty(System.Collections.IDictionary)">
+            <summary>
+            Convert the JobDataMap into a list of properties.
+            </summary>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetObjectFromBlob(System.Data.IDataReader,System.Int32)">
+            <summary>
+            This method should be overridden by any delegate subclasses that need
+            special handling for BLOBs. The default implementation uses standard
+            ADO.NET operations.
+            </summary>
+            <param name="rs">The data reader, already queued to the correct row.</param>
+            <param name="colIndex">The column index for the BLOB.</param>
+            <returns>The deserialized object from the DataReader BLOB.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectVolatileTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Get the names of all of the triggers that are volatile.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectVolatileJobs(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Get the names of all of the jobs that are volatile.
+            </summary>
+            <param name="conn">The DB Connection</param>
+            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetJobDetailFromBlob(System.Data.IDataReader,System.Int32)">
+            <summary>
+            This method should be overridden by any delegate subclasses that need
+            special handling for BLOBs for job details. 
+            </summary>
+            <param name="rs">The result set, already queued to the correct row.</param>
+            <param name="colIndex">The column index for the BLOB.</param>
+            <returns>The deserialized Object from the ResultSet BLOB.</returns>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectPausedTriggerGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
+            <summary>
+            Selects the paused trigger groups.
+            </summary>
+            <param name="conn">The DB Connection.</param>
+            <returns></returns>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.StdAdoDelegate.TriggersToAcquireLimit">
+            <summary>
+            Gets the triggers to acquire limit.
+            </summary>
+            <value>The triggers to acquire limit.</value>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.FirebirdDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.FirebirdDelegate"/> class.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.FirebirdDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.FirebirdDelegate"/> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="tablePrefix">The table prefix.</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+            <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.FirebirdDelegate.CreateSqlForSelectNextTriggerToAcquire">
+            <summary>
+            Creates the SQL for select next trigger to acquire.
+            </summary>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.FirebirdDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            Firebird specific version with FIRST functionality
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Quartz.Impl.AdoJobStore.FiredTriggerRecord">
+            <summary>
+            Conveys the state of a fired-trigger record.
+            </summary>
+            <author>James House</author>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.FireInstanceId">
+            <summary>
+            Gets or sets the fire instance id.
+            </summary>
+            <value>The fire instance id.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.FireTimestamp">
+            <summary>
+            Gets or sets the fire timestamp.
+            </summary>
+            <value>The fire timestamp.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.JobIsStateful">
+            <summary>
+            Gets or sets a value indicating whether [job is stateful].
+            </summary>
+            <value><c>true</c> if [job is stateful]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.JobKey">
+            <summary>
+            Gets or sets the job key.
+            </summary>
+            <value>The job key.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.SchedulerInstanceId">
+            <summary>
+            Gets or sets the scheduler instance id.
+            </summary>
+            <value>The scheduler instance id.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.TriggerKey">
+            <summary>
+            Gets or sets the trigger key.
+            </summary>
+            <value>The trigger key.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.FireInstanceState">
+            <summary>
+            Gets or sets the state of the fire instance.
+            </summary>
+            <value>The state of the fire instance.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.JobRequestsRecovery">
+            <summary>
+            Gets or sets a value indicating whether [job requests recovery].
+            </summary>
+            <value><c>true</c> if [job requests recovery]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.TriggerIsVolatile">
+            <summary>
+            Gets or sets a value indicating whether [trigger is volatile].
+            </summary>
+            <value><c>true</c> if [trigger is volatile]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Quartz.Impl.AdoJobStore.FiredTriggerRecord.Priority">
+            <summary>
+            Gets or sets the priority.
+            </summary>
+            <value>The priority.</value>
         </member>
         <member name="T:Quartz.Impl.AdoJobStore.InvalidConfigurationException">
             <summary>
@@ -4299,6 +5296,15 @@
             Set the transaction isolation level of DB connections to sequential.
             </summary>
         </member>
+        <member name="P:Quartz.Impl.AdoJobStore.JobStoreSupport.AcquireTriggersWithinLock">
+            <summary>
+            Whether or not the query and update to acquire a Trigger for firing
+            should be performed after obtaining an explicit DB lock (to avoid 
+            possible race conditions on the trigger's db row).  This is
+            is considered unnecessary for most databases (due to the nature of
+             the SQL update that is performed), and therefore a superfluous performance hit.
+            </summary>
+        </member>
         <member name="P:Quartz.Impl.AdoJobStore.JobStoreSupport.DriverDelegateType">
             <summary> 
             Get or set the ADO.NET driver delegate class name.
@@ -4361,6 +5367,45 @@
             <seealso cref="M:Quartz.Impl.AdoJobStore.JobStoreSupport.ExecuteInNonManagedTXLock(System.String,Quartz.Impl.AdoJobStore.JobStoreSupport.ITransactionCallback)"/>
             <seealso cref="M:Quartz.Impl.AdoJobStore.JobStoreSupport.ExecuteInLock(System.String,Quartz.Impl.AdoJobStore.JobStoreSupport.ITransactionCallback)"/>
             <seealso cref="M:Quartz.Impl.AdoJobStore.JobStoreSupport.ExecuteWithoutLock(Quartz.Impl.AdoJobStore.JobStoreSupport.ITransactionCallback)"/>
+        </member>
+        <member name="T:Quartz.Spi.ITypeLoadHelper">
+            <summary> 
+            An interface for classes wishing to provide the service of loading classes
+            and resources within the scheduler...
+            </summary>
+            <author>James House</author>
+        </member>
+        <member name="M:Quartz.Spi.ITypeLoadHelper.Initialize">
+            <summary> 
+            Called to give the ClassLoadHelper a chance to Initialize itself,
+            including the oportunity to "steal" the class loader off of the calling
+            thread, which is the thread that is initializing Quartz.
+            </summary>
+        </member>
+        <member name="M:Quartz.Spi.ITypeLoadHelper.LoadType(System.String)">
+            <summary> 
+            Return the class with the given name.
+            </summary>
+        </member>
+        <member name="M:Quartz.Spi.ITypeLoadHelper.GetResource(System.String)">
+            <summary> 
+            Finds a resource with a given name. This method returns null if no
+            resource with this name is found.
+            </summary>
+            <param name="name">name of the desired resource
+            </param>
+            <returns> a java.net.URL object
+            </returns>
+        </member>
+        <member name="M:Quartz.Spi.ITypeLoadHelper.GetResourceAsStream(System.String)">
+            <summary> 
+            Finds a resource with a given name. This method returns null if no
+            resource with this name is found.
+            </summary>
+            <param name="name">name of the desired resource
+            </param>
+            <returns> a java.io.InputStream object
+            </returns>
         </member>
         <member name="T:Quartz.Impl.AdoJobStore.JobStoreSupport.RecoverMisfiredJobsResult">
             <summary>
@@ -4557,6 +5602,38 @@
             <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0). </exception>
             <exception cref="T:System.ArgumentNullException">The info parameter is null. </exception>
         </member>
+        <member name="T:Quartz.Impl.AdoJobStore.MySQLDelegate">
+            <summary>
+            This is a driver delegate for the MySQL ADO.NET driver.
+            </summary>
+            <author>Marko Lahma</author>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.MySQLDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.MySQLDelegate"/> class.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.MySQLDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.MySQLDelegate"/> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="tablePrefix">The table prefix.</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+            <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.MySQLDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            MySQL version with LIMIT support.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Quartz.Impl.AdoJobStore.NoSuchDelegateException">
             <summary>
             Exception class for when a driver delegate cannot be found for a given
@@ -4573,957 +5650,48 @@
             <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0). </exception>
             <exception cref="T:System.ArgumentNullException">The info parameter is null. </exception>
         </member>
+        <member name="T:Quartz.Impl.AdoJobStore.OracleDelegate">
+            <summary>
+            This is a driver delegate for the Oracle database.
+            </summary>
+            <author>Marko Lahma</author>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.OracleDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.OracleDelegate"/> class.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.OracleDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.OracleDelegate"/> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="tablePrefix">The table prefix.</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+            <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.OracleDelegate.CreateSqlForSelectNextTriggerToAcquire">
+            <summary>
+            Creates the SQL for select next trigger to acquire.
+            </summary>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.OracleDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            Oracle version with rownum support.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Quartz.Impl.AdoJobStore.PostgreSQLDelegate">
             <summary>
             This is a driver delegate for the PostgreSQL ADO.NET driver.
             </summary>
             <author>Marko Lahma</author>
-        </member>
-        <member name="T:Quartz.Impl.AdoJobStore.StdAdoDelegate">
-            <summary>
-            This is meant to be an abstract base class for most, if not all, <see cref="T:Quartz.Impl.AdoJobStore.IDriverDelegate"/>
-            implementations. Subclasses should override only those methods that need
-            special handling for the DBMS driver in question.
-            </summary>
-            <author><a href="mailto:jeff@binaryfeed.org">Jeffrey Wescott</a></author>
-            <author>James House</author>
-            <author>Marko Lahma (.NET)</author>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
-            <summary>
-            Create new StdAdoDelegate instance.
-            </summary>
-            <param name="logger">the logger to use during execution</param>
-            <param name="tablePrefix">the prefix of all table names</param>
-            <param name="instanceId">The instance id.</param>
-            <param name="dbProvider">The db provider.</param>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
-            <summary>
-            Create new StdAdoDelegate instance.
-            </summary>
-            <param name="logger">the logger to use during execution</param>
-            <param name="tablePrefix">the prefix of all table names</param>
-            <param name="instanceId">The instance id.</param>
-            <param name="dbProvider">The db provider.</param>
-            <param name="useProperties">if set to <c>true</c> [use properties].</param>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStatesFromOtherStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
-            <summary>
-            Insert the job detail record.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="newState">the new state for the triggers</param>
-            <param name="oldState1">the first old state to update</param>
-            <param name="oldState2">the second old state to update</param>
-            <returns>number of rows updated</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.Int64)">
-            <summary>
-            Get the names of all of the triggers that have misfired.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="ts">The ts.</param>
-            <returns>an array of <see cref="T:Quartz.Util.Key"/> objects</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersInState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary> 
-            Select all of the triggers in a given state.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <param name="state">The state the triggers must be in</param>
-            <returns> an array of trigger <see cref="T:Quartz.Util.Key"/>s </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggersInState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.Int64)">
-            <summary>
-            Get the names of all of the triggers in the given state that have
-            misfired - according to the given timestamp.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <param name="state">The state.</param>
-            <param name="ts">The time stamp.</param>
-            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggersInStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.DateTime,System.Int32,System.Collections.IList)">
-            <summary>
-            Get the names of all of the triggers in the given states that have
-            misfired - according to the given timestamp.  No more than count will
-            be returned.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="state1">The state1.</param>
-            <param name="state2">The state2.</param>
-            <param name="ts">The ts.</param>
-            <param name="count">The most misfired triggers to return, negative for all</param>
-            <param name="resultList">
-            Output parameter.  A List of <see cref="T:Quartz.Util.Key"/> objects.  Must not be null
-            </param>
-            <returns>Whether there are more misfired triggers left to find beyond the given count.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.CountMisfiredTriggersInStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.DateTime)">
-            <summary>
-            Get the number of triggers in the given states that have
-            misfired - according to the given timestamp.
-            </summary>
-            <param name="conn"></param>
-            <param name="state1"></param>
-            <param name="state2"></param>
-            <param name="ts"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectMisfiredTriggersInGroupInState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.Int64)">
-            <summary>
-            Get the names of all of the triggers in the given group and state that
-            have misfired.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <param name="groupName">Name of the group.</param>
-            <param name="state">The state.</param>
-            <param name="ts">The timestamp.</param>
-            <returns>an array of <see cref="T:Quartz.Util.Key"/> objects</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersForRecoveringJobs(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select all of the triggers for jobs that are requesting recovery. The
-            returned trigger objects will have unique "recoverXXX" trigger names and
-            will be in the <see cref="F:Quartz.SchedulerConstants.DefaultRecoveryGroup"/>
-            trigger group.
-            </summary>
-            <remarks>
-            In order to preserve the ordering of the triggers, the fire time will be
-            set from the <i>ColumnFiredTime</i> column in the <i>TableFiredTriggers</i>
-            table. The caller is responsible for calling <see cref="M:Quartz.Trigger.ComputeFirstFireTimeUtc(Quartz.ICalendar)"/>
-            on each returned trigger. It is also up to the caller to insert the
-            returned triggers to ensure that they are fired.
-            </remarks>
-            <param name="conn">The DB Connection</param>
-            <returns> an array of <see cref="T:Quartz.Trigger"/> objects</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteFiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Delete all fired triggers.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <returns>The number of rows deleted.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteFiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Delete all fired triggers of the given instance.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <param name="instanceName">The instance id.</param>
-            <returns>The number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail)">
-            <summary>
-            Insert the job detail record.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="job">The job to insert.</param>
-            <returns>Number of rows inserted.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetDbBooleanValue(System.Boolean)">
-            <summary>
-            Gets the db presentation for boolean value. Subclasses can overwrite this behaviour.
-            </summary>
-            <param name="booleanValue">Value to map to database.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail)">
-            <summary>
-            Update the job detail record.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="job">The job to update.</param>
-            <returns>Number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerNamesForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Get the names of all of the triggers associated with the given job.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="jobName">The name of the job.</param>
-            <param name="groupName">The group containing the job.</param>
-            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteJobListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete all job listeners for the given job.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="jobName">The name of the job.</param>
-            <param name="groupName">The group containing the job.</param>
-            <returns>The number of rows deleted.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete the job detail record for the given job.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="jobName">the name of the job</param>
-            <param name="groupName">the group containing the job</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.IsJobStateful(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Check whether or not the given job is stateful.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="jobName">the name of the job</param>
-            <param name="groupName">the group containing the job</param>
-            <returns>
-            true if the job exists and is stateful, false otherwise
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.JobExists(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Check whether or not the given job exists.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="jobName">the name of the job</param>
-            <param name="groupName">the group containing the job</param>
-            <returns>true if the job exists, false otherwise</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateJobData(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail)">
-            <summary>
-            Update the job data map for the given job.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="job">the job to update</param>
-            <returns>the number of rows updated</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertJobListener(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.JobDetail,System.String)">
-            <summary>
-            Associate a listener with a job.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="job">The job to associate with the listener.</param>
-            <param name="listener">The listener to insert.</param>
-            <returns>The number of rows inserted.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Get all of the listeners for a given job.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="jobName">The job name whose listeners are wanted.</param>
-            <param name="groupName">The group containing the job.</param>
-            <returns>Array of <see cref="T:System.String"/> listener names.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobDetail(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,Quartz.Spi.ITypeLoadHelper)">
-            <summary>
-            Select the JobDetail object for a given job name / group name.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="jobName">The job name whose listeners are wanted.</param>
-            <param name="groupName">The group containing the job.</param>
-            <param name="loadHelper">The load helper.</param>
-            <returns>The populated JobDetail object.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetMapFromProperties(System.Data.IDataReader,System.Int32)">
-            <summary> build Map from java.util.Properties encoding.</summary>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumJobs(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select the total number of jobs stored.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <returns>The total number of jobs stored.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select all of the job group names that are stored.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <returns>An array of <see cref="T:System.String"/> group names.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobsInGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Select all of the jobs contained in a given group.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="groupName">The group containing the jobs.</param>
-            <returns>An array of <see cref="T:System.String"/> job names.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String,Quartz.JobDetail)">
-            <summary>
-            Insert the base trigger data.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="trigger">the trigger to insert</param>
-            <param name="state">the state that the trigger should be stored in</param>
-            <param name="jobDetail">The job detail.</param>
-            <returns>the number of rows inserted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertSimpleTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.SimpleTrigger)">
-            <summary>
-            Insert the simple trigger data.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="trigger">The trigger to insert.</param>
-            <returns>The number of rows inserted.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertCronTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.CronTrigger)">
-            <summary>
-            Insert the cron trigger data.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="trigger">the trigger to insert</param>
-            <returns>the number of rows inserted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertBlobTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger)">
-            <summary>
-            Insert the blob trigger data.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="trigger">The trigger to insert.</param>
-            <returns>The number of rows inserted.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String,Quartz.JobDetail)">
-            <summary>
-            Update the base trigger data.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="trigger">The trigger to insert.</param>
-            <param name="state">The state that the trigger should be stored in.</param>
-            <param name="jobDetail">The job detail.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateSimpleTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.SimpleTrigger)">
-            <summary>
-            Update the simple trigger data.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="trigger">The trigger to insert.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateCronTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.CronTrigger)">
-            <summary>
-            Update the cron trigger data.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="trigger">The trigger to insert.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateBlobTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger)">
-            <summary>
-            Update the blob trigger data.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="trigger">The trigger to insert.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.TriggerExists(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Check whether or not a trigger exists.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="triggerName">The name of the trigger.</param>
-            <param name="groupName">The group containing the trigger.</param>
-            <returns>true if the trigger exists, false otherwise</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
-            <summary>
-            Update the state for a given trigger.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="triggerName">The name of the trigger.</param>
-            <param name="groupName">The group containing the trigger.</param>
-            <param name="state">The new state for the trigger.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStateFromOtherStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String,System.String,System.String)">
-            <summary>
-            Update the given trigger to the given new state, if it is one of the
-            given old states.
-            </summary>
-            <param name="conn">The DB connection.</param>
-            <param name="triggerName">The name of the trigger.</param>
-            <param name="groupName">The group containing the trigger.</param>
-            <param name="newState">The new state for the trigger.</param>
-            <param name="oldState1">One of the old state the trigger must be in.</param>
-            <param name="oldState2">One of the old state the trigger must be in.</param>
-            <param name="oldState3">One of the old state the trigger must be in.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStateFromOtherStatesBeforeTime(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.Int64)">
-            <summary>
-            Update the all triggers to the given new state, if they are in one of
-            the given old states AND its next fire time is before the given time.
-            </summary>
-            <param name="conn">The DB connection</param>
-            <param name="newState">The new state for the trigger</param>
-            <param name="oldState1">One of the old state the trigger must be in</param>
-            <param name="oldState2">One of the old state the trigger must be in</param>
-            <param name="time">The time before which the trigger's next fire time must be</param>
-            <returns>int the number of rows updated</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerGroupStateFromOtherStates(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String,System.String)">
-            <summary>
-            Update all triggers in the given group to the given new state, if they
-            are in one of the given old states.
-            </summary>
-            <param name="conn">The DB connection.</param>
-            <param name="groupName">The group containing the trigger.</param>
-            <param name="newState">The new state for the trigger.</param>
-            <param name="oldState1">One of the old state the trigger must be in.</param>
-            <param name="oldState2">One of the old state the trigger must be in.</param>
-            <param name="oldState3">One of the old state the trigger must be in.</param>
-            <returns>The number of rows updated.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStateFromOtherState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String)">
-            <summary>
-            Update the given trigger to the given new state, if it is in the given
-            old state.
-            </summary>
-            <param name="conn">the DB connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <param name="newState">the new state for the trigger</param>
-            <param name="oldState">the old state the trigger must be in</param>
-            <returns>int the number of rows updated</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerGroupStateFromOtherState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
-            <summary>
-            Update all of the triggers of the given group to the given new state, if
-            they are in the given old state.
-            </summary>
-            <param name="conn">the DB connection</param>
-            <param name="groupName">the group containing the triggers</param>
-            <param name="newState">the new state for the trigger group</param>
-            <param name="oldState">the old state the triggers must be in</param>
-            <returns>int the number of rows updated</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStatesForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String)">
-            <summary>
-            Update the states of all triggers associated with the given job.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="jobName">the name of the job</param>
-            <param name="groupName">the group containing the job</param>
-            <param name="state">the new state for the triggers</param>
-            <returns>the number of rows updated</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateTriggerStatesForJobFromOtherState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,System.String,System.String)">
-            <summary>
-            Updates the state of the trigger states for job from other.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="jobName">Name of the job.</param>
-            <param name="groupName">Name of the group.</param>
-            <param name="state">The state.</param>
-            <param name="oldState">The old state.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteTriggerListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete all of the listeners associated with a given trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger whose listeners will be deleted</param>
-            <param name="groupName">the name of the group containing the trigger</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertTriggerListener(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String)">
-            <summary>
-            Associate a listener with the given trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="trigger">the trigger</param>
-            <param name="listener">the name of the listener to associate with the trigger</param>
-            <returns>the number of rows inserted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerListeners(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select the listeners associated with a given trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>
-            array of <see cref="T:System.String"/> trigger listener names
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteSimpleTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete the simple trigger data for a trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteCronTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete the cron trigger data for a trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteBlobTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete the cron trigger data for a trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Delete the base trigger data for a trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumTriggersForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select the number of triggers associated with a given job.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="jobName">the name of the job</param>
-            <param name="groupName">the group containing the job</param>
-            <returns>the number of triggers for the given job</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobForTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String,Quartz.Spi.ITypeLoadHelper)">
-            <summary>
-            Select the job to which the trigger is associated.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <param name="loadHelper">The load helper.</param>
-            <returns>The <see cref="T:Quartz.JobDetail"/> object associated with the given trigger</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersForJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select the triggers for a job
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="jobName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>
-            an array of <see cref="T:Quartz.Trigger"/> objects
-            associated with a given job.
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersForCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Select the triggers for a calendar
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <param name="calName">Name of the calendar.</param>
-            <returns>
-            An array of <see cref="T:Quartz.Trigger"/> objects associated with a given job.
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectStatefulJobsOfTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Selects the stateful jobs of trigger group.
-            </summary>
-            <param name="conn">The database connection.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select a trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>The <see cref="T:Quartz.Trigger"/> object</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerJobDataMap(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select a trigger's JobDataMap.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>The <see cref="T:Quartz.JobDataMap"/> of the Trigger, never null, but possibly empty. </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select a trigger's state value.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>The <see cref="T:Quartz.Trigger"/> object</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerStatus(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select a trigger status (state and next fire time).
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="triggerName">the name of the trigger</param>
-            <param name="groupName">the group containing the trigger</param>
-            <returns>
-            a <see cref="T:Quartz.Util.TriggerStatus"/> object, or null
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select the total number of triggers stored.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <returns>the total number of triggers stored</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select all of the trigger group names that are stored.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <returns>
-            an array of <see cref="T:System.String"/> group names
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggersInGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Select all of the triggers contained in a given group.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="groupName">the group containing the triggers</param>
-            <returns>
-            an array of <see cref="T:System.String"/> trigger names
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertPausedTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Inserts the paused trigger group.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeletePausedTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Deletes the paused trigger group.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteAllPausedTriggerGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Deletes all paused trigger groups.
-            </summary>
-            <param name="conn">The conn.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.IsTriggerGroupPaused(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Determines whether the specified trigger group is paused.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns>
-            	<c>true</c> if trigger group is paused; otherwise, <c>false</c>.
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.IsExistingTriggerGroup(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Determines whether given trigger group already exists.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns>
-            	<c>true</c> if trigger group exists; otherwise, <c>false</c>.
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,Quartz.ICalendar)">
-            <summary>
-            Insert a new calendar.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="calendarName">The name for the new calendar.</param>
-            <param name="calendar">The calendar.</param>
-            <returns>the number of rows inserted</returns>
-            <throws>  IOException </throws>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,Quartz.ICalendar)">
-            <summary>
-            Update a calendar.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="calendarName">The name for the new calendar.</param>
-            <param name="calendar">The calendar.</param>
-            <returns>the number of rows updated</returns>
-            <throws>  IOException </throws>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.CalendarExists(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Check whether or not a calendar exists.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="calendarName">The name of the calendar.</param>
-            <returns>
-            true if the trigger exists, false otherwise
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Select a calendar.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="calendarName">The name of the calendar.</param>
-            <returns>the Calendar</returns>
-            <throws>  ClassNotFoundException </throws>
-            <throws>  IOException </throws>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.CalendarIsReferenced(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Check whether or not a calendar is referenced by any triggers.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="calendarName">The name of the calendar.</param>
-            <returns>
-            true if any triggers reference the calendar, false otherwise
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteCalendar(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Delete a calendar.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="calendarName">The name of the trigger.</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectNumCalendars(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select the total number of calendars stored.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <returns>the total number of calendars stored</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectCalendars(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select all of the stored calendars.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <returns>
-            an array of <see cref="T:System.String"/> calendar names
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerForFireTime(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.DateTime)">
-            <summary>
-            Select the trigger that will be fired at the given fire time.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="fireTime">the time that the trigger will be fired</param>
-            <returns>
-            a <see cref="T:Quartz.Util.Key"/> representing the
-            trigger that will be fired at the given fire time, or null if no
-            trigger will be fired at that time
-            </returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectTriggerToAcquire(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.DateTime,System.DateTime)">
-            <summary>
-            Select the next trigger which will fire to fire between the two given timestamps
-            in ascending order of fire time, and then descending by priority.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="noLaterThan">highest value of <see cref="M:Quartz.Trigger.GetNextFireTimeUtc"/> of the triggers (exclusive)</param>
-            <param name="noEarlierThan">highest value of <see cref="M:Quartz.Trigger.GetNextFireTimeUtc"/> of the triggers (inclusive)</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertFiredTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,Quartz.Trigger,System.String,Quartz.JobDetail)">
-            <summary>
-            Insert a fired trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="trigger">the trigger</param>
-            <param name="state">the state that the trigger should be stored in</param>
-            <param name="job">The job.</param>
-            <returns>the number of rows inserted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectFiredTriggerRecords(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select the states of all fired-trigger records for a given trigger, or
-            trigger group if trigger name is <see langword="null"/>.
-            </summary>
-            <param name="conn">The DB connection.</param>
-            <param name="triggerName">Name of the trigger.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns>a List of <see cref="T:Quartz.Impl.AdoJobStore.FiredTriggerRecord"/> objects.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectFiredTriggerRecordsByJob(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Select the states of all fired-trigger records for a given job, or job
-            group if job name is <see langword="null"/>.
-            </summary>
-            <param name="conn">The DB connection.</param>
-            <param name="jobName">Name of the job.</param>
-            <param name="groupName">Name of the group.</param>
-            <returns>a List of <see cref="T:Quartz.Impl.AdoJobStore.FiredTriggerRecord"/> objects.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectInstancesFiredTriggerRecords(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Select the states of all fired-trigger records for a given scheduler
-            instance.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <param name="instanceName">Name of the instance.</param>
-            <returns>A list of FiredTriggerRecord objects.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectFiredTriggerInstanceNames(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Select the distinct instance names of all fired-trigger records.
-            </summary>
-            <param name="conn">The conn.</param>
-            <returns></returns>
-            <remarks>
-            This is useful when trying to identify orphaned fired triggers (a
-            fired trigger without a scheduler state record.)
-            </remarks>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteFiredTrigger(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Delete a fired trigger.
-            </summary>
-            <param name="conn">the DB Connection</param>
-            <param name="entryId">the fired trigger entry to delete</param>
-            <returns>the number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectJobExecutionCount(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.String)">
-            <summary>
-            Selects the job execution count.
-            </summary>
-            <param name="conn">The DB connection.</param>
-            <param name="jobName">Name of the job.</param>
-            <param name="jobGroup">The job group.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteVolatileFiredTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Delete all volatile fired triggers.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <returns>The number of rows deleted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.InsertSchedulerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.DateTime,System.TimeSpan)">
-            <summary>
-            Inserts the state of the scheduler.
-            </summary>
-            <param name="conn">The conn.</param>
-            <param name="instanceName">The instance id.</param>
-            <param name="checkInTime">The check in time.</param>
-            <param name="interval">The interval.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.DeleteSchedulerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            Deletes the state of the scheduler.
-            </summary>
-            <param name="conn">The database connection.</param>
-            <param name="instanceName">The instance id.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.UpdateSchedulerState(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String,System.DateTime)">
-            <summary>
-            Updates the state of the scheduler.
-            </summary>
-            <param name="conn">The database connection.</param>
-            <param name="instanceName">The instance id.</param>
-            <param name="checkInTime">The check in time.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectSchedulerStateRecords(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)">
-            <summary>
-            A List of all current <see cref="T:Quartz.Impl.AdoJobStore.SchedulerStateRecord"/>s.
-            <p>
-            If instanceId is not null, then only the record for the identified
-            instance will be returned.
-            </p>
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <param name="instanceName">The instance id.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.ReplaceTablePrefix(System.String)">
-            <summary>
-            Replace the table prefix in a query by replacing any occurrences of
-            "{0}" with the table prefix.
-            </summary>
-            <param name="query">The unsubstitued query</param>
-            <returns>The query, with proper table prefix substituted</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SerializeObject(System.Object)">
-            <summary>
-            Create a serialized <see lanword="byte[]"/> version of an Object.
-            </summary>
-            <param name="obj">the object to serialize</param>
-            <returns>Serialized object as byte array.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SerializeJobData(Quartz.JobDataMap)">
-            <summary>
-            Remove the transient data from and then create a serialized <see cref="T:System.IO.MemoryStream"/>
-            version of a <see cref="T:Quartz.JobDataMap"/> and returns the underlying bytes.
-            </summary>
-            <param name="data">The data.</param>
-            <returns>the serialized data as byte array</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SerializeProperties(Quartz.JobDataMap)">
-            <summary>
-            serialize
-            </summary>
-            <param name="data">The data.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.ConvertFromProperty(System.Collections.Specialized.NameValueCollection)">
-            <summary> 
-            Convert the JobDataMap into a list of properties.
-            </summary>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.ConvertToProperty(System.Collections.IDictionary)">
-            <summary>
-            Convert the JobDataMap into a list of properties.
-            </summary>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetObjectFromBlob(System.Data.IDataReader,System.Int32)">
-            <summary>
-            This method should be overridden by any delegate subclasses that need
-            special handling for BLOBs. The default implementation uses standard
-            ADO.NET operations.
-            </summary>
-            <param name="rs">The data reader, already queued to the correct row.</param>
-            <param name="colIndex">The column index for the BLOB.</param>
-            <returns>The deserialized object from the DataReader BLOB.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectVolatileTriggers(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Get the names of all of the triggers that are volatile.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectVolatileJobs(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Get the names of all of the jobs that are volatile.
-            </summary>
-            <param name="conn">The DB Connection</param>
-            <returns>An array of <see cref="T:Quartz.Util.Key"/> objects.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.GetJobDetailFromBlob(System.Data.IDataReader,System.Int32)">
-            <summary>
-            This method should be overridden by any delegate subclasses that need
-            special handling for BLOBs for job details. 
-            </summary>
-            <param name="rs">The result set, already queued to the correct row.</param>
-            <param name="colIndex">The column index for the BLOB.</param>
-            <returns>The deserialized Object from the ResultSet BLOB.</returns>
-        </member>
-        <member name="M:Quartz.Impl.AdoJobStore.StdAdoDelegate.SelectPausedTriggerGroups(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder)">
-            <summary>
-            Selects the paused trigger groups.
-            </summary>
-            <param name="conn">The DB Connection.</param>
-            <returns></returns>
         </member>
         <member name="M:Quartz.Impl.AdoJobStore.PostgreSQLDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
             <summary>
@@ -5543,6 +5711,13 @@
             <param name="instanceId">The instance id.</param>
             <param name="dbProvider">The db provider.</param>
             <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.PostgreSQLDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            PostgreSQL version with LIMIT support.
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Quartz.Impl.AdoJobStore.SchedulerStateRecord">
             <summary>
@@ -5609,6 +5784,75 @@
             <seealso cref="M:Quartz.Impl.AdoJobStore.SimpleSemaphore.IsLockOwner(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)"/>
             <seealso cref="M:Quartz.Impl.AdoJobStore.SimpleSemaphore.ObtainLock(Quartz.Impl.AdoJobStore.Common.DbMetadata,Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)"/>
             <seealso cref="M:Quartz.Impl.AdoJobStore.SimpleSemaphore.ReleaseLock(Quartz.Impl.AdoJobStore.ConnectionAndTransactionHolder,System.String)"/>
+        </member>
+        <member name="T:Quartz.Impl.AdoJobStore.SQLiteDelegate">
+            <summary>
+            This is a driver delegate for the SQLiteDelegate ADO.NET driver.
+            </summary>
+            <author>Marko Lahma</author>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SQLiteDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.SQLiteDelegate"/> class.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SQLiteDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.SQLiteDelegate"/> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="tablePrefix">The table prefix.</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+            <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SQLiteDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            SQLite version with LIMIT support.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Quartz.Impl.AdoJobStore.SqlServerDelegate">
+            <summary>
+            A SQL Server specific driver delegate.
+            </summary>
+            <author>Marko Lahma</author>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SqlServerDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.SqlServerDelegate"/> class.
+            </summary>
+            <param name="logger">the logger to use during execution</param>
+            <param name="tablePrefix">the prefix of all table names</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SqlServerDelegate.#ctor(Common.Logging.ILog,System.String,System.String,Quartz.Impl.AdoJobStore.IDbProvider,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Quartz.Impl.AdoJobStore.SqlServerDelegate"/> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="tablePrefix">The table prefix.</param>
+            <param name="instanceId">The instance id.</param>
+            <param name="dbProvider">The db provider.</param>
+            <param name="useProperties">if set to <c>true</c> [use properties].</param>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SqlServerDelegate.CreateSqlForSelectNextTriggerToAcquire">
+            <summary>
+            Creates the SQL for select next trigger to acquire.
+            </summary>
+        </member>
+        <member name="M:Quartz.Impl.AdoJobStore.SqlServerDelegate.GetSelectNextTriggerToAcquireSql">
+            <summary>
+            Gets the select next trigger to acquire SQL clause.
+            SQL Server specific version with TOP functionality
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Quartz.Impl.AdoJobStore.StdRowLockSemaphore">
             <summary> 
@@ -5733,13 +5977,13 @@
             </summary>
             <param name="baseCalendar">The base calendar.</param>
         </member>
-        <member name="M:Quartz.Impl.Calendar.BaseCalendar.#ctor(System.TimeZone)">
+        <member name="M:Quartz.Impl.Calendar.BaseCalendar.#ctor(System.TimeZoneInfo)">
             <summary>
             Initializes a new instance of the <see cref="T:Quartz.Impl.Calendar.BaseCalendar"/> class.
             </summary>
             <param name="timeZone">The time zone.</param>
         </member>
-        <member name="M:Quartz.Impl.Calendar.BaseCalendar.#ctor(Quartz.ICalendar,System.TimeZone)">
+        <member name="M:Quartz.Impl.Calendar.BaseCalendar.#ctor(Quartz.ICalendar,System.TimeZoneInfo)">
             <summary>
             Initializes a new instance of the <see cref="T:Quartz.Impl.Calendar.BaseCalendar"/> class.
             </summary>
@@ -5879,7 +6123,7 @@
             </param>
             <param name="expression">a String representation of the desired cron expression</param>
         </member>
-        <member name="M:Quartz.Impl.Calendar.CronCalendar.#ctor(Quartz.ICalendar,System.String,System.TimeZone)">
+        <member name="M:Quartz.Impl.Calendar.CronCalendar.#ctor(Quartz.ICalendar,System.String,System.TimeZoneInfo)">
             <summary>
             Create a <see cref="T:Quartz.Impl.Calendar.CronCalendar"/> with the given cron expression and 
             <see cref="T:Quartz.Impl.Calendar.BaseCalendar"/>. 
@@ -8766,6 +9010,12 @@
             <p>Defaults to <see langword="false" />.</p>  
             </summary>
         </member>
+        <member name="F:Quartz.Job.NativeJob.PropertyWorkingDirectory">
+            <summary> 
+            Optional parameter that specifies the workling directory to be used by 
+            the executed command.
+            </summary>
+        </member>
         <member name="M:Quartz.Job.NativeJob.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Quartz.Job.NativeJob"/> class.
@@ -10056,45 +10306,6 @@
             'remembers' it.  
             </remarks>
             <author>James House</author>
-        </member>
-        <member name="T:Quartz.Spi.ITypeLoadHelper">
-            <summary> 
-            An interface for classes wishing to provide the service of loading classes
-            and resources within the scheduler...
-            </summary>
-            <author>James House</author>
-        </member>
-        <member name="M:Quartz.Spi.ITypeLoadHelper.Initialize">
-            <summary> 
-            Called to give the ClassLoadHelper a chance to Initialize itself,
-            including the oportunity to "steal" the class loader off of the calling
-            thread, which is the thread that is initializing Quartz.
-            </summary>
-        </member>
-        <member name="M:Quartz.Spi.ITypeLoadHelper.LoadType(System.String)">
-            <summary> 
-            Return the class with the given name.
-            </summary>
-        </member>
-        <member name="M:Quartz.Spi.ITypeLoadHelper.GetResource(System.String)">
-            <summary> 
-            Finds a resource with a given name. This method returns null if no
-            resource with this name is found.
-            </summary>
-            <param name="name">name of the desired resource
-            </param>
-            <returns> a java.net.URL object
-            </returns>
-        </member>
-        <member name="M:Quartz.Spi.ITypeLoadHelper.GetResourceAsStream(System.String)">
-            <summary> 
-            Finds a resource with a given name. This method returns null if no
-            resource with this name is found.
-            </summary>
-            <param name="name">name of the desired resource
-            </param>
-            <returns> a java.io.InputStream object
-            </returns>
         </member>
         <member name="M:Quartz.Simpl.CascadingClassLoadHelper.Initialize">
             <summary> 
@@ -12499,6 +12710,9 @@
         <member name="F:Quartz.Xml.quartz.joblistener">
             <remarks/>
         </member>
+        <member name="F:Quartz.Xml.quartz.triggerlistener">
+            <remarks/>
+        </member>
         <member name="F:Quartz.Xml.quartz.calendar">
             <remarks/>
         </member>
@@ -12542,6 +12756,9 @@
             <remarks/>
         </member>
         <member name="F:Quartz.Xml.abstractTriggerType.volatileSpecified">
+            <remarks/>
+        </member>
+        <member name="F:Quartz.Xml.abstractTriggerType.triggerlistenerref">
             <remarks/>
         </member>
         <member name="F:Quartz.Xml.abstractTriggerType.jobdatamap">
@@ -12668,6 +12885,15 @@
             <remarks/>
         </member>
         <member name="F:Quartz.Xml.calendarType.replace">
+            <remarks/>
+        </member>
+        <member name="T:Quartz.Xml.triggerlistenerType">
+            <remarks/>
+        </member>
+        <member name="F:Quartz.Xml.triggerlistenerType.type">
+            <remarks/>
+        </member>
+        <member name="F:Quartz.Xml.triggerlistenerType.name">
             <remarks/>
         </member>
         <member name="T:Quartz.Xml.ValidationException">
@@ -13483,6 +13709,17 @@
             <see cref="T:Quartz.IScheduler"/>.
             </remarks>
         </member>
+        <member name="M:Quartz.Trigger.#ctor(System.String)">
+            <summary>
+            Create a <see cref="T:Quartz.Trigger"/> with the given name, and default group.
+            </summary>
+            <remarks>
+            Note that the <see cref="P:Quartz.Trigger.JobName"/> and <see cref="P:Quartz.Trigger.JobGroup"/>
+            properties must be set before the <see cref="T:Quartz.Trigger"/>
+            can be placed into a <see cref="T:Quartz.IScheduler"/>.
+            </remarks>
+            <param name="name">The name.</param>
+        </member>
         <member name="M:Quartz.Trigger.#ctor(System.String,System.String)">
             <summary>
             Create a <see cref="T:Quartz.Trigger"/> with the given name, and group.
@@ -13887,6 +14124,16 @@
             will be set the the system's default time zone.
             </remarks>
         </member>
+        <member name="M:Quartz.CronTrigger.#ctor(System.String)">
+            <summary>
+            Create a <see cref="T:Quartz.CronTrigger"/> with the given name and default group.
+            </summary>
+            <remarks>
+            The start-time will also be set to the current time, and the time zone
+            will be set the the system's default time zone.
+            </remarks>
+            <param name="name">The name.</param>
+        </member>
         <member name="M:Quartz.CronTrigger.#ctor(System.String,System.String)">
             <summary>
             Create a <see cref="T:Quartz.CronTrigger"/> with the given name and group.
@@ -13941,7 +14188,7 @@
             <param name="jobGroup">The job group.</param>
             <param name="cronExpression">The cron expression.</param>
         </member>
-        <member name="M:Quartz.CronTrigger.#ctor(System.String,System.String,System.String,System.String,System.String,System.TimeZone)">
+        <member name="M:Quartz.CronTrigger.#ctor(System.String,System.String,System.String,System.String,System.String,System.TimeZoneInfo)">
             <summary>
             Create a <see cref="T:Quartz.CronTrigger"/> with the given name and group,
             associated with the identified <see cref="T:Quartz.JobDetail"/>,
@@ -13971,7 +14218,7 @@
             <param name="endTime">The end time.</param>
             <param name="cronExpression">The cron expression.</param>
         </member>
-        <member name="M:Quartz.CronTrigger.#ctor(System.String,System.String,System.String,System.String,System.DateTime,System.Nullable{System.DateTime},System.String,System.TimeZone)">
+        <member name="M:Quartz.CronTrigger.#ctor(System.String,System.String,System.String,System.String,System.DateTime,System.Nullable{System.DateTime},System.String,System.TimeZoneInfo)">
             <summary>
             Create a <see cref="T:Quartz.CronTrigger"/> with fire time dictated by the
             <param name="cronExpression"/> resolved with respect to the specified
@@ -14520,6 +14767,16 @@
             placed into a <see cref="T:Quartz.IScheduler"/>.
             </p>
             </summary>
+        </member>
+        <member name="M:Quartz.JobDetail.#ctor(System.String,System.Type)">
+            <summary>
+            Create a <see cref="T:Quartz.JobDetail"/> with the given name, default group, and
+            the default settings of all the other properties.
+            If <see langword="null"/>, Scheduler.DefaultGroup will be used.
+            </summary>
+            <exception cref="T:System.ArgumentException">
+            If name is null or empty, or the group is an empty string.
+            </exception>
         </member>
         <member name="M:Quartz.JobDetail.#ctor(System.String,System.String,System.Type)">
             <summary>
@@ -15262,6 +15519,22 @@
             a <see cref="T:Quartz.IScheduler"/>.
             </remarks>
         </member>
+        <member name="M:Quartz.NthIncludedDayTrigger.#ctor(System.String)">
+            <summary> 
+            Create an <see cref="T:Quartz.NthIncludedDayTrigger"/> with the given name and
+            default group but no specified <see cref="T:Quartz.JobDetail"/>. This will result 
+            initially in a default monthly trigger that fires on the first day of 
+            every month at 12:00 PM (<see cref="F:Quartz.NthIncludedDayTrigger.n"/>=1, 
+            intervalType=<see cref="F:Quartz.NthIncludedDayTrigger.IntervalTypeMonthly"/>, 
+            fireAtTime=12:00").
+            <p>
+            Note that <see cref="P:Quartz.Trigger.JobName"/> and <see cref="P:Quartz.Trigger.JobGroup"/> must
+            be called before the <see cref="T:Quartz.NthIncludedDayTrigger"/> can be placed 
+            into a <see cref="T:Quartz.IScheduler"/>.
+            </p>
+            </summary>
+            <param name="name">the name for the <see cref="T:Quartz.NthIncludedDayTrigger"/></param>
+        </member>
         <member name="M:Quartz.NthIncludedDayTrigger.#ctor(System.String,System.String)">
             <summary> 
             Create an <see cref="T:Quartz.NthIncludedDayTrigger"/> with the given name and
@@ -15911,10 +16184,22 @@
             Create a <see cref="T:Quartz.SimpleTrigger"/> with no settings.
             </summary>
         </member>
+        <member name="M:Quartz.SimpleTrigger.#ctor(System.String)">
+            <summary>
+            Create a <see cref="T:Quartz.SimpleTrigger"/> that will occur immediately, and
+            not repeat.
+            </summary>
+        </member>
         <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.String)">
             <summary>
             Create a <see cref="T:Quartz.SimpleTrigger"/> that will occur immediately, and
             not repeat.
+            </summary>
+        </member>
+        <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.Int32,System.TimeSpan)">
+            <summary>
+            Create a <see cref="T:Quartz.SimpleTrigger"/> that will occur immediately, and
+            repeat at the the given interval the given number of times.
             </summary>
         </member>
         <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.String,System.Int32,System.TimeSpan)">
@@ -15923,11 +16208,31 @@
             repeat at the the given interval the given number of times.
             </summary>
         </member>
+        <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.DateTime)">
+            <summary>
+            Create a <see cref="T:Quartz.SimpleTrigger"/> that will occur at the given time,
+            and not repeat.
+            </summary>
+        </member>
         <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.String,System.DateTime)">
             <summary>
             Create a <see cref="T:Quartz.SimpleTrigger"/> that will occur at the given time,
             and not repeat.
             </summary>
+        </member>
+        <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.DateTime,System.Nullable{System.DateTime},System.Int32,System.TimeSpan)">
+            <summary>
+            Create a <see cref="T:Quartz.SimpleTrigger"/> that will occur at the given time,
+            and repeat at the the given interval the given number of times, or until
+            the given end time.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="startTimeUtc">A UTC <see cref="T:System.DateTime"/> set to the time for the <see cref="T:Quartz.Trigger"/> to fire.</param>
+            <param name="endTimeUtc">A UTC <see cref="T:System.DateTime"/> set to the time for the <see cref="T:Quartz.Trigger"/>
+            to quit repeat firing.</param>
+            <param name="repeatCount">The number of times for the <see cref="T:Quartz.Trigger"/> to repeat
+            firing, use <see cref="F:Quartz.SimpleTrigger.RepeatIndefinitely"/> for unlimited times.</param>
+            <param name="repeatInterval">The time span to pause between the repeat firing.</param>
         </member>
         <member name="M:Quartz.SimpleTrigger.#ctor(System.String,System.String,System.DateTime,System.Nullable{System.DateTime},System.Int32,System.TimeSpan)">
             <summary>
@@ -16742,7 +17047,7 @@
             <param name="to">The ending date at which to stop finding fire times</param>
             <returns>List of java.util.Date objects</returns>
         </member>
-        <member name="M:Quartz.TriggerUtils.TranslateTime(System.DateTime,System.TimeZone,System.TimeZone)">
+        <member name="M:Quartz.TriggerUtils.TranslateTime(System.DateTime,System.TimeZoneInfo,System.TimeZoneInfo)">
             <summary>
             Translate a date and time from a users timezone to the another
             (probably server) timezone to assist in creating a simple trigger with
@@ -16753,7 +17058,7 @@
             <param name="dest">the destination time-zone</param>
             <returns>the translated UTC date</returns>
         </member>
-        <member name="M:Quartz.TriggerUtils.GetOffset(System.DateTime,System.TimeZone)">
+        <member name="M:Quartz.TriggerUtils.GetOffset(System.DateTime,System.TimeZoneInfo)">
             <summary>
             Gets the offset from UT for the given date in the given timezone,
             taking into account daylight savings.
@@ -16762,7 +17067,7 @@
             <param name="tz">the time-zone to calculate to offset to</param>
             <returns>the offset</returns>
         </member>
-        <member name="M:Quartz.TriggerUtils.UseDaylightTime(System.TimeZone)">
+        <member name="M:Quartz.TriggerUtils.UseDaylightTime(System.TimeZoneInfo)">
             <summary>
             This functions determines if the TimeZone uses daylight saving time
             </summary>
