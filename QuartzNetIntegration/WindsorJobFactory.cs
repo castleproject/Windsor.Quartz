@@ -3,9 +3,9 @@ using Quartz;
 using Quartz.Spi;
 
 namespace Castle.Facilities.QuartzIntegration {
-    /// <summary>
-    /// Creates a Quartz job with Windsor
-    /// </summary>
+	/// <summary>
+	/// Creates a Quartz job with Windsor
+	/// </summary>
 	public class WindsorJobFactory : IJobFactory {
 		private readonly IKernel kernel;
 

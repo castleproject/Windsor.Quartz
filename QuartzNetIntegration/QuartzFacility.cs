@@ -5,7 +5,7 @@ using Quartz.Job;
 using Quartz.Spi;
 
 namespace Castle.Facilities.QuartzIntegration {
-    public class QuartzFacility : AbstractFacility {
+    public class QuartzFacility : Castle.MicroKernel.Facilities.AbstractFacility {
         protected override void Init() {
             Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
             AddComponent<FileScanJob>();
@@ -48,6 +48,9 @@ namespace Castle.Facilities.QuartzIntegration {
         }
 
         internal void BuildServiceDictionary<K, V>(IConfiguration config, MutableConfiguration parameters) {
+
+            
+
             var dict = parameters.CreateChild("dictionary");
             dict.Attribute("keyType", typeof (K).AssemblyQualifiedName);
             dict.Attribute("valueType", typeof (V).AssemblyQualifiedName);
