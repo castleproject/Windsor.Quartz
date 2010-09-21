@@ -1,6 +1,7 @@
 ﻿using System;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
+using Castle.MicroKernel.Handlers;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers;
 using Castle.Windsor;
@@ -37,7 +38,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         }
 
         [Test]
-        [ExpectedException(typeof (DependencyResolverException))]
+        [ExpectedException(typeof(HandlerException))]
         public void GlobalJobListeners_with_no_registration_throws() {
             var c = new WindsorContainer();
             var config = new MutableConfiguration("facility");
