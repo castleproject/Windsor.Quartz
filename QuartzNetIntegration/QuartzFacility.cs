@@ -1,11 +1,12 @@
 ﻿using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
+using Castle.MicroKernel.Registration;
 using Quartz;
 using Quartz.Job;
 using Quartz.Spi;
 
 namespace Castle.Facilities.QuartzIntegration {
-    public class QuartzFacility : Castle.MicroKernel.Facilities.AbstractFacility {
+    public class QuartzFacility : AbstractFacility {
         protected override void Init() {
             Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
             AddComponent<FileScanJob>();
@@ -48,9 +49,6 @@ namespace Castle.Facilities.QuartzIntegration {
         }
 
         internal void BuildServiceDictionary<K, V>(IConfiguration config, MutableConfiguration parameters) {
-
-            
-
             var dict = parameters.CreateChild("dictionary");
             dict.Attribute("keyType", typeof (K).AssemblyQualifiedName);
             dict.Attribute("valueType", typeof (V).AssemblyQualifiedName);
@@ -87,13 +85,13 @@ namespace Castle.Facilities.QuartzIntegration {
 
         internal string AddComponent<T>() {
             string key = typeof (T).AssemblyQualifiedName;
-            Kernel.AddComponent(key, typeof (T));
+            Kernel.Register(Component.For(typeof(T)).Named(key));
             return key;
         }
 
         internal string AddComponent<I, T>() where T : I {
             string key = typeof (T).AssemblyQualifiedName;
-            Kernel.AddComponent(key, typeof (I), typeof (T));
+            Kernel.Register(Component.For(typeof(I)).ImplementedBy(typeof(T)).Named(key));
             return key;
         }
     }
