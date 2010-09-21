@@ -37,29 +37,35 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\$(TargetFrameworkVersion)\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Castle.Facilities.QuartzIntegration.XML</DocumentationFile>
+    <DocumentationFile>bin\$(TargetFrameworkVersion)\Debug\Castle.Facilities.QuartzIntegration.XML</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\$(TargetFrameworkVersion)\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Castle.Facilities.QuartzIntegration.XML</DocumentationFile>
+    <DocumentationFile>bin\$(TargetFrameworkVersion)\Release\Castle.Facilities.QuartzIntegration.XML</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\lib\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Core" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <HintPath>..\lib\net-4.0\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Windsor">
-      <HintPath>..\lib\Castle.Windsor.dll</HintPath>
+    <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <HintPath>..\lib\net-4.0\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <HintPath>..\lib\net-3.5\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <HintPath>..\lib\net-3.5\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging, Version=1.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
       <SpecificVersion>False</SpecificVersion>
@@ -73,8 +79,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IJobScheduler.cs" />

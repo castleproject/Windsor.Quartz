@@ -1,1 +1,1 @@
-msbuild /p:Configuration=Release /m
+msbuild /t:rebuild /p:Configuration=Release /m %*
