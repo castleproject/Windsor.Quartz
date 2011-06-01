@@ -7,6 +7,7 @@ using Quartz;
 using Quartz.Collection;
 using Quartz.Impl;
 using Quartz.Spi;
+using Castle.MicroKernel;
 
 namespace Castle.Facilities.QuartzIntegration {
 	public class QuartzNetScheduler : IScheduler, IStartable, IDisposable {
@@ -71,13 +72,14 @@ namespace Castle.Facilities.QuartzIntegration {
 			get { return scheduler.GlobalJobListeners; }
 		}
 
-		public QuartzNetScheduler(IDictionary<string, string> props, IJobFactory jobFactory) {
+		public QuartzNetScheduler(IDictionary<string, string> props, IJobFactory jobFactory, IKernel kernel) {
 			foreach (var prop in props.Keys) {
 				properties[prop] = props[prop];
 			}
 			var sf = new StdSchedulerFactory(properties);
 			scheduler = sf.GetScheduler();
 			scheduler.JobFactory = jobFactory;
+            scheduler.AddGlobalJobListener(new ReleasingJobListener(kernel));
 			WaitForJobsToCompleteAtShutdown = true; // default
 		}
 

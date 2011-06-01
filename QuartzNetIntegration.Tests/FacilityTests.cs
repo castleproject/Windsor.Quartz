@@ -7,6 +7,7 @@ using Castle.MicroKernel.Resolvers;
 using Castle.Windsor;
 using NUnit.Framework;
 using Quartz;
+using System.Threading;
 
 namespace Castle.Facilities.QuartzIntegration.Tests {
     [TestFixture]
@@ -61,7 +62,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
             var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
             foreach (IJobListener l in scheduler.GlobalJobListeners)
                 Console.WriteLine(l.Name);
-            Assert.AreEqual(2, scheduler.GlobalJobListeners.Count);
+            Assert.AreEqual(3, scheduler.GlobalJobListeners.Count);
         }
 
         [Test]
@@ -123,6 +124,50 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
             var trigli = scheduler.GetTriggerListener(typeof(SomeTriggerListener).AssemblyQualifiedName);
             Assert.IsNotNull(trigli);
 
+        }
+
+        [Test]
+        public void FacilityRegistersReleasingJobListener() {
+            var c = new WindsorContainer();
+            var config = new MutableConfiguration("facility");
+            config.CreateChild("quartz");
+            c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
+            c.AddFacility("quartz", new QuartzFacility());
+            var scheduler = c.Resolve<IScheduler>();
+            Assert.IsNotNull(scheduler.GlobalJobListeners);
+            Assert.AreEqual(2, scheduler.GlobalJobListeners.Count);
+            Assert.IsInstanceOfType(typeof(ReleasingJobListener), scheduler.GlobalJobListeners[0]);
+        }
+
+        [Test]
+        public void DisposableJobIsDisposed() {
+            var c = new WindsorContainer();
+            c.Register(Component.For<DisposableJob>().LifeStyle.Transient);
+            var config = new MutableConfiguration("facility");
+            config.CreateChild("quartz");
+            c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
+            c.AddFacility("quartz", new QuartzFacility());
+            var scheduler = c.Resolve<IScheduler>();
+            var jobDetail = new JobDetail("somejob", typeof(DisposableJob));
+            var trigger = TriggerUtils.MakeSecondlyTrigger("sometrigger");
+            scheduler.ScheduleJob(jobDetail, trigger);
+            Assert.IsFalse(DisposableJob.Disposed);
+            scheduler.Start();
+            Thread.Sleep(1000);
+            Assert.IsTrue(DisposableJob.Disposed);
+        }
+
+        class DisposableJob : IJob, IDisposable {
+            public static bool Disposed = false;
+
+            public void Dispose() {
+                Console.WriteLine("Dispose");
+                Disposed = true;
+            }
+
+            public void Execute(JobExecutionContext context) {
+                Console.WriteLine("Execute");
+            }
         }
     }
 }

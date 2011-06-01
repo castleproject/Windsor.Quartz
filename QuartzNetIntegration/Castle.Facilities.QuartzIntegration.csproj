@@ -86,6 +86,7 @@
     <Compile Include="QuartzFacility.cs" />
     <Compile Include="QuartzNetScheduler.cs" />
     <Compile Include="QuartzNetSimpleScheduler.cs" />
+    <Compile Include="ReleasingJobListener.cs" />
     <Compile Include="WindsorJobFactory.cs" />
   </ItemGroup>
   <ItemGroup>
