@@ -1,4 +1,4 @@
-﻿using Castle.Core.Configuration;
+using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Registration;
 using Quartz;
@@ -7,8 +7,10 @@ using Quartz.Spi;
 
 namespace Castle.Facilities.QuartzIntegration {
     public class QuartzFacility : AbstractFacility {
+        public IConfiguration Configuration { get; set; }
+
         protected override void Init() {
-            Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
+            Kernel.ConfigurationStore.AddComponentConfiguration(typeof(QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(Configuration));
             AddComponent<FileScanJob>();
             AddComponent<IJobScheduler, QuartzNetSimpleScheduler>();
             AddComponent<IJobFactory, WindsorJobFactory>();
