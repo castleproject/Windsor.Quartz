@@ -65,9 +65,17 @@
     <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
       <HintPath>..\lib\net-3.5\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz, Version=1.0.2.3, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Quartz.dll</HintPath>
+    <Reference Include="Quartz" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <HintPath>..\lib\net-3.5\Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <HintPath>..\lib\net-4.0\Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="C5" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <HintPath>..\lib\net-3.5\C5.dll</HintPath>
+    </Reference>
+    <Reference Include="C5" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <HintPath>..\lib\net-4.0\C5.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
