@@ -1,57 +1,93 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Quartz;
+using Quartz.Impl.Matchers;
 
 namespace Castle.Facilities.QuartzIntegration {
-	public class QuartzNetSimpleScheduler : IJobScheduler {
-		private readonly IScheduler scheduler;
 
-		public QuartzNetSimpleScheduler(IScheduler scheduler) {
-			this.scheduler = scheduler;
-		}
+    /// <summary>
+    /// Light-weight job scheduler
+    /// </summary>
+    public class QuartzNetSimpleScheduler : IJobScheduler {
+        private readonly IScheduler _scheduler;
 
-	    public void ResumeJob(string jobName) {
-            scheduler.ResumeJob(jobName, null);
-	    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scheduler"></param>
+        public QuartzNetSimpleScheduler(IScheduler scheduler) {
+            this._scheduler = scheduler;
+        }
 
-	    public bool DeleteJob(string jobName) {
-			return scheduler.DeleteJob(jobName, null);
-		}
+        /// <summary>
+        /// Resumes triggers of a paused job
+        /// </summary>
+        public void ResumeJob(JobKey jobKey) {
+            _scheduler.ResumeJob(jobKey);
+        }
 
-		public bool Interrupt(string jobName) {
-			return scheduler.Interrupt(jobName, null);
-		}
+        public bool DeleteJob(JobKey jobKey)
+        {
+            return _scheduler.DeleteJob(jobKey);
+        }
 
-	    public TriggerState GetJobStatus(string jobName) {
-	        var triggerName = scheduler.GetTriggersOfJob(jobName, null)[0].Name;
-	        return scheduler.GetTriggerState(triggerName, null);
-	    }
+        /// <summary>
+        /// Interrupts a running job
+        /// </summary>
+        public bool Interrupt(JobKey jobKey)
+        {
+            return _scheduler.Interrupt(jobKey);
+        }
 
-	    public ICollection<string> GetJobNames() {
-			return scheduler.GetJobNames(null);
-		}
+        /// <summary>
+        /// Gets the job status, assuming it has only one trigger
+        /// </summary>
+        public TriggerState GetJobStatus(JobKey jobKey)
+        {
+            var triggerKey = _scheduler.GetTriggersOfJob(jobKey)[0].Key;
+            return _scheduler.GetTriggerState(triggerKey);
+        }
 
-		public void RunJob(string jobName) {
-			scheduler.TriggerJob(jobName, null);
-		}
+        public ICollection<JobKey> GetJobKeys()
+        {
+            return _scheduler.GetJobGroupNames()
+                .SelectMany(jobGroupName => _scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(jobGroupName)))
+                .ToList();
+        }
 
-		public ICollection<string> GetExecutingJobs() {
-		    var r = new List<string>();
-            foreach (JobExecutionContext j in scheduler.GetCurrentlyExecutingJobs())
-                r.Add(j.JobDetail.Name);
-		    return r;
-		}
+        /// <summary>
+        /// Runs a job immediately
+        /// </summary>
+        public void RunJob(JobKey jobKey)
+        {
+            _scheduler.TriggerJob(jobKey);
+        }
 
-		public void PauseAll() {
-			scheduler.PauseAll();
-		}
+        public ICollection<JobKey> GetExecutingJobs()
+        {
+            return _scheduler.GetCurrentlyExecutingJobs().Select(j => j.JobDetail.Key).ToList();
+        }
 
-		public void ResumeAll() {
-			scheduler.ResumeAll();
-		}
+        /// <summary>
+        /// Pauses all triggers
+        /// </summary>
+        public void PauseAll() {
+            _scheduler.PauseAll();
+        }
 
-		public void PauseJob(string jobName) {
-			scheduler.PauseJob(jobName, null);
-		}
-	}
+        /// <summary>
+        /// Resumes all triggers
+        /// </summary>
+        public void ResumeAll() {
+            _scheduler.ResumeAll();
+        }
+
+        /// <summary>
+        /// Pauses a job's triggers
+        /// </summary>
+        public void PauseJob(JobKey jobKey)
+        {
+            _scheduler.PauseJob(jobKey);
+        }
+    }
 }

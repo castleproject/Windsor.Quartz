@@ -3,15 +3,15 @@ using Quartz;
 
 namespace SampleApp {
 	public class SampleJobListener : IJobListener {
-		public void JobToBeExecuted(JobExecutionContext context) {
+		public void JobToBeExecuted(IJobExecutionContext context) {
 			Console.WriteLine(Name + ".JobToBeExecuted");
 		}
 
-		public void JobExecutionVetoed(JobExecutionContext context) {
+		public void JobExecutionVetoed(IJobExecutionContext context) {
 			Console.WriteLine(Name + ".JobExecutionVetoed");
 		}
 
-		public void JobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+		public void JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException) {
 			Console.WriteLine(Name + ".JobWasExecuted");
 		}
 

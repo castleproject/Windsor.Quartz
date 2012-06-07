@@ -3,19 +3,19 @@ using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration.Tests {
     public class SomeTriggerListener : ITriggerListener {
-        public void TriggerFired(Trigger trigger, JobExecutionContext context) {
+        public void TriggerFired(ITrigger trigger, IJobExecutionContext context) {
             throw new NotImplementedException();
         }
 
-        public bool VetoJobExecution(Trigger trigger, JobExecutionContext context) {
+        public bool VetoJobExecution(ITrigger trigger, IJobExecutionContext context) {
             throw new NotImplementedException();
         }
 
-        public void TriggerMisfired(Trigger trigger) {
+        public void TriggerMisfired(ITrigger trigger) {
             throw new NotImplementedException();
         }
 
-        public void TriggerComplete(Trigger trigger, JobExecutionContext context, SchedulerInstruction triggerInstructionCode) {
+        public void TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode) {
             throw new NotImplementedException();
         }
 
