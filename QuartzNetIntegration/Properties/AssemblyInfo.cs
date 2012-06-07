@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Castle.Facilities.QuartzIntegration")]
-[assembly: AssemblyCopyright("Copyright © Mauricio Scheffer 2009")]
+[assembly: AssemblyCopyright("Copyright © Mauricio Scheffer 2009-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
