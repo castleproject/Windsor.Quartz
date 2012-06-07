@@ -3,20 +3,20 @@ using Quartz;
 
 namespace SampleApp {
 	public class SampleTriggerListener : ITriggerListener {
-		public void TriggerFired(Trigger trigger, JobExecutionContext context) {
+		public void TriggerFired(ITrigger trigger, IJobExecutionContext context) {
 			Console.WriteLine(Name + ".TriggerFired");
 		}
 
-		public bool VetoJobExecution(Trigger trigger, JobExecutionContext context) {
+		public bool VetoJobExecution(ITrigger trigger, IJobExecutionContext context) {
 			Console.WriteLine(Name + ".VetoJobExecution");
 			return false;
 		}
 
-		public void TriggerMisfired(Trigger trigger) {
+		public void TriggerMisfired(ITrigger trigger) {
 			Console.WriteLine(Name + ".TriggerMisfired");
 		}
 
-		public void TriggerComplete(Trigger trigger, JobExecutionContext context, SchedulerInstruction triggerInstructionCode) {
+		public void TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode) {
 			Console.WriteLine(Name + ".TriggerComplete");
 		}
 

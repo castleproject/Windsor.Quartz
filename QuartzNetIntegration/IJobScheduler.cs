@@ -2,18 +2,26 @@
 using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration {
+
     /// <summary>
     /// Light-weight job scheduler
     /// </summary>
     public interface IJobScheduler {
-        ICollection<string> GetJobNames();
+
+        /// <summary>
+        /// Get all known jobs
+        /// </summary>
+        ICollection<JobKey> GetJobKeys();
 
         /// <summary>
         /// Runs a job immediately
         /// </summary>
-        /// <param name="jobName"></param>
-        void RunJob(string jobName);
-        ICollection<string> GetExecutingJobs();
+        void RunJob(JobKey jobKey);
+
+        /// <summary>
+        /// Get all currently executing jobs
+        /// </summary>
+        ICollection<JobKey> GetExecutingJobs();
 
         /// <summary>
         /// Pauses all triggers
@@ -28,28 +36,26 @@ namespace Castle.Facilities.QuartzIntegration {
         /// <summary>
         /// Pauses a job's triggers
         /// </summary>
-        /// <param name="jobName"></param>
-        void PauseJob(string jobName);
+        void PauseJob(JobKey jobKey);
 
         /// <summary>
         /// Resumes triggers of a paused job
         /// </summary>
-        /// <param name="jobName"></param>
-        void ResumeJob(string jobName);
-        bool DeleteJob(string jobName);
+        void ResumeJob(JobKey jobKey);
+
+        /// <summary>
+        /// Deletes a job
+        /// </summary>
+        bool DeleteJob(JobKey jobKey);
 
         /// <summary>
         /// Interrupts a running job
         /// </summary>
-        /// <param name="jobName"></param>
-        /// <returns></returns>
-        bool Interrupt(string jobName);
+        bool Interrupt(JobKey jobKey);
 
         /// <summary>
         /// Gets the job status, assuming it has only one trigger
         /// </summary>
-        /// <param name="jobName"></param>
-        /// <returns></returns>
-        TriggerState GetJobStatus(string jobName);
+        TriggerState GetJobStatus(JobKey jobKey);
     }
 }

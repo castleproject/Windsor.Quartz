@@ -3,15 +3,15 @@ using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration.Tests {
     public class SomeJobListener : IJobListener {
-        public void JobToBeExecuted(JobExecutionContext context) {
+        public void JobToBeExecuted(IJobExecutionContext context) {
             throw new NotImplementedException();
         }
 
-        public void JobExecutionVetoed(JobExecutionContext context) {
+        public void JobExecutionVetoed(IJobExecutionContext context) {
             throw new NotImplementedException();
         }
 
-        public void JobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+        public void JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException) {
             throw new NotImplementedException();
         }
 
