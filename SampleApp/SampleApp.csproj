@@ -65,6 +65,9 @@
     <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
       <HintPath>..\lib\net-3.5\Castle.Windsor.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\lib\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Quartz" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
       <HintPath>..\lib\net-3.5\Quartz.dll</HintPath>
     </Reference>
