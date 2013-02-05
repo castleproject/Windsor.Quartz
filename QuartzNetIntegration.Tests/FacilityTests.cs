@@ -29,7 +29,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
         {
             using (var c = new WindsorContainer())
             {
-                c.AddFacility<QuartzFacility>(f => f.Config(new MutableConfiguration("facility")));
+                c.AddFacility<QuartzFacility>(f => f.Configure(new MutableConfiguration("facility")));
             }
         }
 
@@ -40,7 +40,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
             {
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
                 var js = c.Resolve<IJobScheduler>();
                 var sched = c.Resolve<IScheduler>();
                 var factory = c.Resolve<IJobFactory>();
@@ -60,7 +60,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
 
                 c.Resolve<IScheduler>();
             }
@@ -75,7 +75,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
                 c.Register(Component.For<IJobListener>().ImplementedBy<SomeJobListener>().Named("jobli"));
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
 
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
                 foreach (IJobListener l in scheduler.ListenerManager.GetJobListeners())
@@ -93,7 +93,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 config.CreateChild("globalTriggerListeners").CreateChild("item", "${jobli}");
                 c.Register(Component.For<ITriggerListener>().ImplementedBy<SomeTriggerListener>().Named("jobli"));
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
                 
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
                 foreach (ITriggerListener l in scheduler.ListenerManager.GetTriggerListeners())
@@ -116,7 +116,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
                     .CreateChild("listener", "${jobli}");
                 
                 c.Register(Component.For<IJobListener>().ImplementedBy<SomeJobListener>().Named("jobli"));
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
                 
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetJobListeners())
@@ -140,7 +140,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
                     .CreateChild("listener", "${trigli}");
                 
                 c.Register(Component.For<ITriggerListener>().ImplementedBy<SomeTriggerListener>().Named("trigli"));
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
                 
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetTriggerListeners())
@@ -157,7 +157,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
             {
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz");
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
                 var scheduler = c.Resolve<IScheduler>();
                 //Assert.IsNotNull(scheduler.GlobalJobListeners);
                 //Assert.AreEqual(2, scheduler.GlobalJobListeners.Count);
@@ -173,7 +173,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests
                 c.Register(Component.For<DisposableJob>().LifeStyle.Transient);
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz");
-                c.AddFacility<QuartzFacility>(f => f.Config(config));
+                c.AddFacility<QuartzFacility>(f => f.Configure(config));
                 var scheduler = c.Resolve<IScheduler>();
                 var jobDetail = JobBuilder.Create<DisposableJob>().WithIdentity("somejob").Build();
                 var trigger = TriggerBuilder.Create().WithIdentity("sometrigger").WithSimpleSchedule(s => s.WithIntervalInSeconds(1)).Build();
