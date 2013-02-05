@@ -396,9 +396,9 @@ namespace Castle.Facilities.QuartzIntegration {
         ///             parameter is not set to true then an exception will be thrown.
         /// </para>
         /// </remarks>
-        public void ScheduleJobs(IDictionary<IJobDetail, IList<ITrigger>> triggersAndJobs, bool replace)
+        public void ScheduleJob(IJobDetail jobDetail, Quartz.Collection.ISet<ITrigger> triggersForJob, bool replace)
         {
-            _scheduler.ScheduleJobs(triggersAndJobs, replace);
+            _scheduler.ScheduleJob(jobDetail, triggersForJob, replace);
         }
 
         /// <summary>
@@ -894,6 +894,11 @@ namespace Castle.Facilities.QuartzIntegration {
         public void Dispose()
         {
             Stop();
+        }
+
+        public void ScheduleJobs(IDictionary<IJobDetail, Quartz.Collection.ISet<ITrigger>> triggersAndJobs, bool replace)
+        {
+           _scheduler.ScheduleJobs(triggersAndJobs, replace);
         }
     }
 }
