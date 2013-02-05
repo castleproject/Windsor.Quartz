@@ -22,7 +22,11 @@ namespace Castle.Facilities.QuartzIntegration {
             AddComponent<IScheduler, QuartzNetScheduler>();
         }
 
-        public void Config(IConfiguration config)
+        /// <summary>
+        /// Override xml configuration
+        /// </summary>
+        /// <param name="config">Configuration</param>
+        public void Configure(IConfiguration config)
         {
             _configuration = config;
         }
