@@ -50,5 +50,10 @@ namespace Castle.Facilities.QuartzIntegration {
         {
             return (IJob)(ResolveByJobName ? _kernel.Resolve(bundle.JobDetail.Key.ToString(), typeof(IJob)) : _kernel.Resolve(bundle.JobDetail.JobType));
         }
+
+        public void ReturnJob(IJob job)
+        {
+            _kernel.ReleaseComponent(job);
+        }
     }
 }

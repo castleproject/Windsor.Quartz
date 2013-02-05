@@ -6,14 +6,31 @@ using Quartz.Job;
 using Quartz.Spi;
 
 namespace Castle.Facilities.QuartzIntegration {
-    public class QuartzFacility : AbstractFacility {
-        protected override void Init() {
-            Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
+    public class QuartzFacility : AbstractFacility
+    {
+        protected IConfiguration _configuration;
+        
+        protected override void Init()
+        {
+            Kernel.ConfigurationStore.AddComponentConfiguration(
+                typeof(QuartzNetScheduler).AssemblyQualifiedName, 
+                BuildConfig(_configuration ?? FacilityConfig)
+            );
             AddComponent<FileScanJob>();
             AddComponent<IJobScheduler, QuartzNetSimpleScheduler>();
             AddComponent<IJobFactory, WindsorJobFactory>();
             AddComponent<IScheduler, QuartzNetScheduler>();
         }
+
+        /// <summary>
+        /// Override xml configuration
+        /// </summary>
+        /// <param name="config">Configuration</param>
+        public void Configure(IConfiguration config)
+        {
+            _configuration = config;
+        }
+
 
         internal IConfiguration BuildConfig(IConfiguration config)
         {
