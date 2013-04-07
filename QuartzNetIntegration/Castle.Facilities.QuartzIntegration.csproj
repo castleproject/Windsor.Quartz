@@ -32,6 +32,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,6 +57,14 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="C5, Version=1.1.0.0, Culture=neutral, PublicKeyToken=06a1b38866503b69, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Quartz.2.0.1\lib\net40\C5.dll</HintPath>
+    </Reference>
+    <Reference Include="C5, Version=1.1.0.0, Culture=neutral, PublicKeyToken=06a1b38866503b69, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Quartz.2.0.1\lib\net35\C5.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Core" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
       <HintPath>..\lib\net-4.0\Castle.Core.dll</HintPath>
     </Reference>
@@ -67,15 +77,17 @@
     <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
       <HintPath>..\lib\net-3.5\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Common.Logging, Version=1.2.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e">
+    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Common.Logging.dll</HintPath>
+      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
-      <HintPath>..\lib\net-3.5\Quartz.dll</HintPath>
+    <Reference Include="Quartz, Version=2.0.1.100, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Quartz.2.0.1\lib\net40\Quartz.dll</HintPath>
     </Reference>
-    <Reference Include="Quartz" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
-      <HintPath>..\lib\net-4.0\Quartz.dll</HintPath>
+    <Reference Include="Quartz, Version=2.0.1.100, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Quartz.2.0.1\lib\net35\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -108,7 +120,11 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
