@@ -65,17 +65,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Quartz.2.0.1\lib\net35\C5.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
-      <HintPath>..\lib\net-4.0\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net40-client\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
-      <HintPath>..\lib\net-4.0\Castle.Windsor.dll</HintPath>
+    <Reference Include="Castle.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net35\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
-      <HintPath>..\lib\net-3.5\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v4.0'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Windsor" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
-      <HintPath>..\lib\net-3.5\Castle.Windsor.dll</HintPath>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL" Condition="'$(TargetFrameworkVersion)'=='v3.5'">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net35\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -93,6 +97,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IJobScheduler.cs" />
