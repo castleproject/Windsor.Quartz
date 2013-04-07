@@ -85,6 +85,10 @@ namespace SampleApp
             Console.WriteLine(GetType().Name + ".SchedulerStarted");
         }
 
+        public void SchedulerStarting() {
+            Console.WriteLine(GetType().Name + ".SchedulerStarting");
+        }
+
         public void SchedulerShutdown()
         {
             Console.WriteLine(GetType().Name + ".SchedulerShutdown");

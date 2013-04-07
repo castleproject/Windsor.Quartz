@@ -386,19 +386,12 @@ namespace Castle.Facilities.QuartzIntegration {
             return _scheduler.ScheduleJob(trigger);
         }
 
-        /// <summary>
-        /// Schedule all of the given jobs with the related set of triggers.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// If any of the given jobs or triggers already exist (or more
-        ///             specifically, if the keys are not unique) and the replace
-        ///             parameter is not set to true then an exception will be thrown.
-        /// </para>
-        /// </remarks>
-        public void ScheduleJobs(IDictionary<IJobDetail, IList<ITrigger>> triggersAndJobs, bool replace)
-        {
+        public void ScheduleJobs(IDictionary<IJobDetail, Quartz.Collection.ISet<ITrigger>> triggersAndJobs, bool replace) {
             _scheduler.ScheduleJobs(triggersAndJobs, replace);
+        }
+
+        public void ScheduleJob(IJobDetail jobDetail, Quartz.Collection.ISet<ITrigger> triggersForJob, bool replace) {
+            _scheduler.ScheduleJob(jobDetail, triggersForJob, replace);
         }
 
         /// <summary>
