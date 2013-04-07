@@ -7,3 +7,4 @@ _ReSharper*
 _UpgradeReport_Files
 packages/*
 .nuget/*.exe
+*.nupkg
