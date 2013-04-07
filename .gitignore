@@ -5,3 +5,5 @@
 *.cache
 _ReSharper*
 _UpgradeReport_Files
+packages/*
+.nuget/*.exe
