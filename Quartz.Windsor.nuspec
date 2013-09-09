@@ -2,7 +2,7 @@
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>Quartz.Windsor</id>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <authors>Mauricio Scheffer</authors>
     <owners>Mauricio Scheffer</owners>
     <licenseUrl>https://github.com/castleprojectcontrib/QuartzNetIntegration/raw/master/License.txt</licenseUrl>
