@@ -459,6 +459,10 @@ namespace Castle.Facilities.QuartzIntegration {
             _scheduler.AddJob(jobDetail, replace);
         }
 
+        public void AddJob(IJobDetail jobDetail, bool replace, bool storeNonDurableWhileAwaitingScheduling) {
+            _scheduler.AddJob(jobDetail, replace, storeNonDurableWhileAwaitingScheduling);
+        }
+
         /// <summary>
         /// Delete the identified <see cref="T:Quartz.IJob"/> from the Scheduler - and any
         ///             associated <see cref="T:Quartz.ITrigger"/>s.
