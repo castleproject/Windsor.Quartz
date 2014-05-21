@@ -467,6 +467,30 @@ namespace Castle.Facilities.QuartzIntegration {
         }
 
         /// <summary>
+        /// Add the given <see cref="T:Quartz.IJob"/> to the Scheduler - with no associated
+        ///             <see cref="T:Quartz.ITrigger"/>. The <see cref="T:Quartz.IJob"/> will be 'dormant' until
+        ///             it is scheduled with a <see cref="T:Quartz.ITrigger"/>, or <see cref="M:Quartz.IScheduler.TriggerJob(Quartz.JobKey)"/>
+        ///             is called for it.
+        /// 
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// With the <paramref name="storeNonDurableWhileAwaitingScheduling"/> parameter
+        ///             set to
+        /// <code>
+        /// true
+        /// </code>
+        /// , a non-durable job can be stored.  Once it is
+        ///             scheduled, it will resume normal non-durable behavior (i.e. be deleted
+        ///             once there are no remaining associated triggers).
+        /// 
+        /// </remarks>
+        public void AddJob(IJobDetail jobDetail, bool replace, bool storeNonDurableWhileAwaitingScheduling)
+        {
+            _scheduler.AddJob(jobDetail, replace, storeNonDurableWhileAwaitingScheduling);
+        }
+
+        /// <summary>
         /// Delete the identified <see cref="T:Quartz.IJob"/> from the Scheduler - and any
         ///             associated <see cref="T:Quartz.ITrigger"/>s.
         /// </summary>
