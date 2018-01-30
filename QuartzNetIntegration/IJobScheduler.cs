@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration {
@@ -6,56 +7,57 @@ namespace Castle.Facilities.QuartzIntegration {
     /// <summary>
     /// Light-weight job scheduler
     /// </summary>
-    public interface IJobScheduler {
+    public interface IJobScheduler
+    {
 
         /// <summary>
         /// Get all known jobs
         /// </summary>
-        ICollection<JobKey> GetJobKeys();
+        Task<JobKey[]> GetJobKeys(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Runs a job immediately
         /// </summary>
-        void RunJob(JobKey jobKey);
+        Task RunJob(JobKey jobKey, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Get all currently executing jobs
         /// </summary>
-        ICollection<JobKey> GetExecutingJobs();
+        Task<JobKey[]> GetExecutingJobs(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Pauses all triggers
         /// </summary>
-        void PauseAll();
+        Task PauseAll(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Resumes all triggers
         /// </summary>
-        void ResumeAll();
+        Task ResumeAll(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Pauses a job's triggers
         /// </summary>
-        void PauseJob(JobKey jobKey);
+        Task PauseJob(JobKey jobKey, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Resumes triggers of a paused job
         /// </summary>
-        void ResumeJob(JobKey jobKey);
+        Task ResumeJob(JobKey jobKey, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Deletes a job
         /// </summary>
-        bool DeleteJob(JobKey jobKey);
+        Task<bool> DeleteJob(JobKey jobKey, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Interrupts a running job
         /// </summary>
-        bool Interrupt(JobKey jobKey);
+        Task<bool> Interrupt(JobKey jobKey, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Gets the job status, assuming it has only one trigger
         /// </summary>
-        TriggerState GetJobStatus(JobKey jobKey);
+        Task<TriggerState> GetJobStatus(JobKey jobKey, CancellationToken token = default(CancellationToken));
     }
 }

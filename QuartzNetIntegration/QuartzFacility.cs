@@ -6,9 +6,15 @@ using Quartz.Job;
 using Quartz.Spi;
 
 namespace Castle.Facilities.QuartzIntegration {
-    public class QuartzFacility : AbstractFacility {
-        protected override void Init() {
-            Kernel.ConfigurationStore.AddComponentConfiguration(typeof (QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
+    /// <summary>
+    /// Castle facility for Quartz.NET
+    /// </summary>
+    /// <seealso cref="Castle.MicroKernel.Facilities.AbstractFacility" />
+    public class QuartzFacility : AbstractFacility
+    {
+        protected override void Init()
+        {
+            Kernel.ConfigurationStore.AddComponentConfiguration(typeof(QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
             AddComponent<FileScanJob>();
             AddComponent<IJobScheduler, QuartzNetSimpleScheduler>();
             AddComponent<IJobFactory, WindsorJobFactory>();
@@ -19,9 +25,11 @@ namespace Castle.Facilities.QuartzIntegration {
         {
             if (config == null)
                 throw new FacilityException("Please define the configuration for Quartz.Net facility");
+
             var quartzNet = config.Children["quartz"];
             if (quartzNet == null)
                 throw new FacilityException("Please define the Quartz.Net properties");
+
             var componentConfig = new MutableConfiguration(typeof(QuartzNetScheduler).AssemblyQualifiedName);
             var parameters = componentConfig.CreateChild("parameters");
             BuildProps(quartzNet, parameters.CreateChild("props"));

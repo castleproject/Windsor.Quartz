@@ -1,107 +1,121 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 
 namespace SampleApp
 {
     public class SampleSchedulerListener : ISchedulerListener
     {
-        public void JobScheduled(ITrigger trigger)
+        public async Task JobScheduled(ITrigger trigger, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobScheduled");
+            await WriteMesssage(".JobScheduled", token);
         }
 
-        public void JobUnscheduled(TriggerKey triggerKey)
+        public async Task JobUnscheduled(TriggerKey triggerKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobUnscheduled");
+            await WriteMesssage(".JobUnscheduled", token);
         }
 
-        public void TriggerFinalized(ITrigger trigger)
+        public async Task TriggerFinalized(ITrigger trigger, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".TriggerFinalized");
+            await WriteMesssage(".TriggerFinalized", token);
         }
 
-        public void TriggerPaused(TriggerKey triggerKey)
+        public async Task TriggerPaused(TriggerKey triggerKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".TriggerPaused");
+            await WriteMesssage(".TriggerPaused", token);
         }
 
-        public void TriggersPaused(string triggerGroup)
+        public async Task TriggersPaused(string triggerGroup, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".TriggersPaused");
+            await WriteMesssage(".TriggersPaused", token);
         }
 
-        public void TriggerResumed(TriggerKey triggerKey)
+        public async Task TriggerResumed(TriggerKey triggerKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".TriggerResumed");
+            await WriteMesssage(".TriggerResumed", token);
         }
 
-        public void TriggersResumed(string triggerGroup)
+        public async Task TriggersResumed(string triggerGroup, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".TriggersResumed");
+            await WriteMesssage(".TriggersResumed", token);
         }
 
-        public void JobAdded(IJobDetail jobDetail)
+        public async Task JobAdded(IJobDetail jobDetail, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobAdded");
+            await WriteMesssage(".JobAdded", token);
         }
 
-        public void JobDeleted(JobKey jobKey)
+        public async Task JobDeleted(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobDeleted");
+            await WriteMesssage(".JobDeleted", token);
         }
 
-        public void JobPaused(JobKey jobKey)
+        public async Task JobPaused(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobPaused");
+            await WriteMesssage(".JobPaused", token);
         }
 
-        public void JobsPaused(string jobGroup)
+        public async Task JobInterrupted(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobsPaused");
+            await WriteMesssage(".JobInterupted", token);
         }
 
-        public void JobResumed(JobKey jobKey)
+        public async Task JobsPaused(string jobGroup, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobResumed");
+            await WriteMesssage(".JobsPaused", token);
         }
 
-        public void JobsResumed(string jobGroup)
+        public async Task JobResumed(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".JobsResumed");
+            await WriteMesssage(".JobResumed", token);
         }
 
-        public void SchedulerError(string msg, SchedulerException cause)
+        public async Task JobsResumed(string jobGroup, CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".SchedulerError");
+            await WriteMesssage(".JobsResumed", token);
         }
 
-        public void SchedulerInStandbyMode()
+        public async Task SchedulerError(string msg, SchedulerException cause,
+            CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".SchedulerInStandbyMode");
+            await WriteMesssage(".SchedulerError", token);
         }
 
-        public void SchedulerStarted()
+        public async Task SchedulerInStandbyMode(CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".SchedulerStarted");
+            await WriteMesssage(".SchedulerInStandbyMode", token);
         }
 
-        public void SchedulerStarting() {
-            Console.WriteLine(GetType().Name + ".SchedulerStarting");
+        public async Task SchedulerStarted(CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage(".SchedulerStarted", token);
         }
 
-        public void SchedulerShutdown()
+        public async Task SchedulerStarting(CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".SchedulerShutdown");
+            await WriteMesssage(".SchedulerStarting", token);
         }
 
-        public void SchedulerShuttingdown()
+        public async Task SchedulerShutdown(CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".SchedulerShuttingdown");
+            await WriteMesssage(".SchedulerShutdown", token);
         }
 
-        public void SchedulingDataCleared()
+        public async Task SchedulerShuttingdown(CancellationToken token = default(CancellationToken))
         {
-            Console.WriteLine(GetType().Name + ".SchedulingDataCleared");
+            await WriteMesssage(".SchedulerShuttingdown", token);
+        }
+
+        public async Task SchedulingDataCleared(CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage(".SchedulingDataCleared", token);
+        }
+
+        private Task WriteMesssage(string message, CancellationToken token = default(CancellationToken))
+        {
+            return Task.Run(() => Console.WriteLine("{0}.{1}", GetType().Name, message), token);
         }
     }
 }

@@ -1,2 +1,2 @@
-for %%v in (v3.5,v4.0) do msbuild /t:rebuild /p:Configuration=Release /p:TargetFrameworkVersion=%%v /m %*
+for %%v in (v4.6.1) do msbuild /t:rebuild /p:Configuration=Release /p:TargetFrameworkVersion=%%v /m %*
 .nuget\nuget.exe pack

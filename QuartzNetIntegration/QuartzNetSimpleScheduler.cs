@@ -1,93 +1,155 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 using Quartz.Impl.Matchers;
 
 namespace Castle.Facilities.QuartzIntegration {
 
     /// <summary>
-    /// Light-weight job scheduler
+    ///     Light-weight job scheduler
     /// </summary>
-    public class QuartzNetSimpleScheduler : IJobScheduler {
+    public class QuartzNetSimpleScheduler : IJobScheduler
+    {
         private readonly IScheduler _scheduler;
 
         /// <summary>
-        /// 
+        ///     Initializes a new instance of the <see cref="QuartzNetSimpleScheduler" /> class.
         /// </summary>
-        /// <param name="scheduler"></param>
-        public QuartzNetSimpleScheduler(IScheduler scheduler) {
-            this._scheduler = scheduler;
+        /// <param name="scheduler">The scheduler.</param>
+        public QuartzNetSimpleScheduler(IScheduler scheduler)
+        {
+            _scheduler = scheduler;
         }
 
         /// <summary>
-        /// Resumes triggers of a paused job
+        ///     Resumes triggers of a paused job
         /// </summary>
-        public void ResumeJob(JobKey jobKey) {
-            _scheduler.ResumeJob(jobKey);
-        }
-
-        public bool DeleteJob(JobKey jobKey)
+        /// <param name="jobKey"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task ResumeJob(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            return _scheduler.DeleteJob(jobKey);
+            await _scheduler.ResumeJob(jobKey, token);
         }
 
         /// <summary>
-        /// Interrupts a running job
+        ///     Deletes a job
         /// </summary>
-        public bool Interrupt(JobKey jobKey)
+        /// <param name="jobKey"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteJob(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            return _scheduler.Interrupt(jobKey);
+            return await _scheduler.DeleteJob(jobKey, token);
         }
 
         /// <summary>
-        /// Gets the job status, assuming it has only one trigger
+        ///     Interrupts a running job
         /// </summary>
-        public TriggerState GetJobStatus(JobKey jobKey)
+        public async Task<bool> Interrupt(JobKey jobKey, CancellationToken token = default(CancellationToken))
         {
-            var triggerKey = _scheduler.GetTriggersOfJob(jobKey)[0].Key;
-            return _scheduler.GetTriggerState(triggerKey);
-        }
-
-        public ICollection<JobKey> GetJobKeys()
-        {
-            return _scheduler.GetJobGroupNames()
-                .SelectMany(jobGroupName => _scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(jobGroupName)))
-                .ToList();
+            return await _scheduler.Interrupt(jobKey, token);
         }
 
         /// <summary>
-        /// Runs a job immediately
+        ///     Gets the job status, assuming it has only one trigger
         /// </summary>
-        public void RunJob(JobKey jobKey)
+        public async Task<TriggerState> GetJobStatus(JobKey jobKey,
+            CancellationToken token = default(CancellationToken))
         {
-            _scheduler.TriggerJob(jobKey);
-        }
+            var triggerKeyTask = await _scheduler.GetTriggersOfJob(jobKey, token);
+            var triggerKey = triggerKeyTask.ToArray()[0].Key;
 
-        public ICollection<JobKey> GetExecutingJobs()
-        {
-            return _scheduler.GetCurrentlyExecutingJobs().Select(j => j.JobDetail.Key).ToList();
+            return await _scheduler.GetTriggerState(triggerKey, token);
         }
 
         /// <summary>
-        /// Pauses all triggers
+        ///     Gets the job keys.
         /// </summary>
-        public void PauseAll() {
-            _scheduler.PauseAll();
-        }
-
-        /// <summary>
-        /// Resumes all triggers
-        /// </summary>
-        public void ResumeAll() {
-            _scheduler.ResumeAll();
-        }
-
-        /// <summary>
-        /// Pauses a job's triggers
-        /// </summary>
-        public void PauseJob(JobKey jobKey)
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public async Task<JobKey[]> GetJobKeys(CancellationToken token = default(CancellationToken))
         {
-            _scheduler.PauseJob(jobKey);
+            var jobGroupNames = await _scheduler.GetJobGroupNames(token);
+
+            var task = Task.Run(() =>
+            {
+                var jobGroupNamesArray = jobGroupNames.ToArray();
+                var jobGroupNamesLength = jobGroupNamesArray.Length;
+
+                var tasks = new Task<IReadOnlyCollection<JobKey>>[jobGroupNamesLength];
+
+                for (var index = 0; index < jobGroupNamesArray.Length; index++)
+                {
+                    var jobGroupName = jobGroupNamesArray[index];
+                    tasks[index] = _scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(jobGroupName), token);
+                }
+
+                Task.WaitAll(tasks, token);
+
+                return tasks.SelectMany(x => x.Result).ToArray();
+            }, token);
+
+            return await task;
+        }
+
+        /// <summary>
+        ///     Runs a job immediately
+        /// </summary>
+        /// <param name="jobKey"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <inheritdoc />
+        public async Task RunJob(JobKey jobKey, CancellationToken token = default(CancellationToken))
+        {
+            await _scheduler.TriggerJob(jobKey, token);
+        }
+
+        /// <summary>
+        ///     Get all currently executing jobs
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <inheritdoc />
+        public async Task<JobKey[]> GetExecutingJobs(CancellationToken token)
+        {
+            var executingJobs = await _scheduler.GetCurrentlyExecutingJobs(token);
+            return await Task.Run(() => { return executingJobs.Select(j => j.JobDetail.Key).ToArray(); }, token);
+        }
+
+        /// <summary>
+        ///     Pauses all triggers
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task PauseAll(CancellationToken token = default(CancellationToken))
+        {
+            await _scheduler.PauseAll(token);
+        }
+
+        /// <summary>
+        ///     Resumes all triggers
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <inheritdoc />
+        public async Task ResumeAll(CancellationToken token = default(CancellationToken))
+        {
+            await _scheduler.ResumeAll(token);
+        }
+
+        /// <summary>
+        ///     Pauses a job's triggers
+        /// </summary>
+        /// <param name="jobKey"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <inheritdoc />
+        public async Task PauseJob(JobKey jobKey, CancellationToken token = default(CancellationToken))
+        {
+            await _scheduler.PauseJob(jobKey, token);
         }
     }
 }

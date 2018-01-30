@@ -1,4 +1,3 @@
-using System;
 using Castle.MicroKernel;
 using Quartz;
 using Quartz.Spi;
@@ -8,7 +7,8 @@ namespace Castle.Facilities.QuartzIntegration {
     /// <summary>
     /// Creates a Quartz job with Windsor
     /// </summary>
-    [CLSCompliant(false)]
+    /// <seealso cref="Quartz.Spi.IJobFactory" />
+    /// <inheritdoc />
     public class WindsorJobFactory : IJobFactory
     {
         private readonly IKernel _kernel;
@@ -51,7 +51,12 @@ namespace Castle.Facilities.QuartzIntegration {
             return (IJob)(ResolveByJobName ? _kernel.Resolve(bundle.JobDetail.Key.ToString(), typeof(IJob)) : _kernel.Resolve(bundle.JobDetail.JobType));
         }
 
-        public void ReturnJob(IJob job) {
+        /// <summary>
+        /// Allows the job factory to destroy/cleanup the job if needed.
+        /// </summary>
+        /// <param name="job"></param>
+        public void ReturnJob(IJob job)
+        {
             _kernel.ReleaseComponent(job);
         }
     }
