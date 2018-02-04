@@ -1,24 +1,40 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 
-namespace SampleApp {
-	public class SampleJobListener : IJobListener {
-		public void JobToBeExecuted(IJobExecutionContext context) {
-			Console.WriteLine(Name + ".JobToBeExecuted");
-		}
+namespace SampleApp
+{
+    public class SampleJobListener : IJobListener
+    {
+        public SampleJobListener()
+        {
+            Name = GetType().Name;
+        }
 
-		public void JobExecutionVetoed(IJobExecutionContext context) {
-			Console.WriteLine(Name + ".JobExecutionVetoed");
-		}
+        public async Task JobToBeExecuted(IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage("JobToBeExecuted", token);
+        }
 
-		public void JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException) {
-			Console.WriteLine(Name + ".JobWasExecuted");
-		}
+        public async Task JobExecutionVetoed(IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage("JobExecutionVetoed", token);
+        }
 
-		public string Name { get; set; }
+        public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException,
+            CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage("JobWasExecuted", token);
+        }
 
-		public SampleJobListener() {
-			Name = GetType().Name;
-		}
-	}
+        public string Name { get; set; }
+
+        private Task WriteMesssage(string message, CancellationToken token = default(CancellationToken))
+        {
+            return Task.Run(() => Console.WriteLine("{0}.{1}", GetType().Name, message), token);
+        }
+    }
 }

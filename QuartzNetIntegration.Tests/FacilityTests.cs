@@ -1,61 +1,105 @@
 ﻿using System;
+using System.Linq;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Handlers;
 using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers;
 using Castle.Windsor;
 using NUnit.Framework;
 using Quartz;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Castle.Facilities.QuartzIntegration.Tests {
     [TestFixture]
-    public class FacilityTests {
-        [Test]
-        [ExpectedException(typeof (FacilityException))]
-        public void NoConfig_throws() {
-            using (var c = new WindsorContainer())
-                c.AddFacility("quartz", new QuartzFacility());
-        }
+    public class FacilityTests
+    {
+        private class DisposableJob : IJob, IDisposable
+        {
+            public static bool Disposed;
 
-        [Test]
-        [ExpectedException(typeof (FacilityException))]
-        public void NoProps_throws() {
-            using (var c = new WindsorContainer()) {
-                c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", new MutableConfiguration("facility"));
-                c.AddFacility("quartz", new QuartzFacility());
+            public void Dispose()
+            {
+                Console.WriteLine("Dispose");
+                Disposed = true;
+            }
+
+            public async Task Execute(IJobExecutionContext context)
+            {
+                await Task.Run(() => Console.WriteLine("Execute"));
             }
         }
 
         [Test]
-        public void Basic() {
-            using (var c = new WindsorContainer()) {
-                var config = new MutableConfiguration("facility");
-                config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
-                c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
+        public void Basic()
+        {
+            using (var c = new WindsorContainer())
+            {
+                var facilityConfig = new MutableConfiguration("facility");
+                var quartzConfig = facilityConfig.CreateChild("quartz")
+                    .Attribute("id", "quartznet");
+
+                quartzConfig.CreateChild("item", "qwe").Attribute("key", "qq");
+
+                c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", facilityConfig);
+
                 c.AddFacility("quartz", new QuartzFacility());
+
                 c.Resolve<IJobScheduler>();
                 c.Resolve<IScheduler>();
             }
         }
 
         [Test]
-        [ExpectedException(typeof(HandlerException))]
-        public void GlobalJobListeners_with_no_registration_throws() {
-            using (var c = new WindsorContainer()) {
+        public void DisposableJobIsDisposed()
+        {
+            using (var c = new WindsorContainer())
+            {
+                c.Register(Component.For<DisposableJob>().LifeStyle.Transient);
                 var config = new MutableConfiguration("facility");
-                config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
-                config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
+                config.CreateChild("quartz");
                 c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
+
                 c.AddFacility("quartz", new QuartzFacility());
-                c.Resolve<IScheduler>();
+
+                var scheduler = c.Resolve<IScheduler>();
+                var jobDetail = JobBuilder.Create<DisposableJob>().WithIdentity("somejob").Build();
+                var trigger = TriggerBuilder.Create().WithIdentity("sometrigger").WithSimpleSchedule(s => s.WithIntervalInSeconds(1)).Build();
+
+                var task = scheduler.ScheduleJob(jobDetail, trigger);
+                task.Wait();
+                var dateTimeOffset = task.Result;
+
+                Assert.IsFalse(DisposableJob.Disposed);
+                scheduler.Start();
+                Thread.Sleep(1000);
+                Assert.IsTrue(DisposableJob.Disposed);
             }
         }
 
         [Test]
-        public void GlobalJobListeners() {
-            using (var c = new WindsorContainer()) {
+        public void FacilityRegistersReleasingJobListener()
+        {
+            using (var c = new WindsorContainer())
+            {
+                var config = new MutableConfiguration("facility");
+                config.CreateChild("quartz");
+                c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
+                c.AddFacility("quartz", new QuartzFacility());
+                var scheduler = c.Resolve<IScheduler>();
+                //Assert.IsNotNull(scheduler.GlobalJobListeners);
+                //Assert.AreEqual(2, scheduler.GlobalJobListeners.Count);
+
+                Assert.IsAssignableFrom(typeof(ReleasingJobListener),
+                    scheduler.ListenerManager.GetJobListeners().ToArray()[0]);
+            }
+        }
+
+        [Test]
+        public void GlobalJobListeners()
+        {
+            using (var c = new WindsorContainer())
+            {
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
@@ -63,15 +107,34 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 c.Register(Component.For<IJobListener>().ImplementedBy<SomeJobListener>().Named("jobli"));
                 c.AddFacility("quartz", new QuartzFacility());
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
-                foreach (IJobListener l in scheduler.ListenerManager.GetJobListeners())
+                foreach (var l in scheduler.ListenerManager.GetJobListeners())
                     Console.WriteLine(l.Name);
                 Assert.AreEqual(2, scheduler.ListenerManager.GetJobListeners().Count);
             }
         }
 
         [Test]
-        public void GlobalTriggerListeners() {
-            using (var c = new WindsorContainer()) {
+        public void GlobalJobListeners_with_no_registration_throws()
+        {
+            Assert.Throws(typeof(HandlerException), () =>
+            {
+                using (var c = new WindsorContainer())
+                {
+                    var config = new MutableConfiguration("facility");
+                    config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
+                    config.CreateChild("globalJobListeners").CreateChild("item", "${jobli}");
+                    c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
+                    c.AddFacility("quartz", new QuartzFacility());
+                    c.Resolve<IScheduler>();
+                }
+            });
+        }
+
+        [Test]
+        public void GlobalTriggerListeners()
+        {
+            using (var c = new WindsorContainer())
+            {
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 config.CreateChild("globalTriggerListeners").CreateChild("item", "${jobli}");
@@ -80,15 +143,17 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 c.AddFacility("quartz", new QuartzFacility());
 
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
-                foreach (ITriggerListener l in scheduler.ListenerManager.GetTriggerListeners())
+                foreach (var l in scheduler.ListenerManager.GetTriggerListeners())
                     Console.WriteLine(l.Name);
                 Assert.AreEqual(1, scheduler.ListenerManager.GetTriggerListeners().Count);
             }
         }
 
         [Test]
-        public void JobListeners() {
-            using (var c = new WindsorContainer()) {
+        public void JobListeners()
+        {
+            using (var c = new WindsorContainer())
+            {
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 var listenerConfig = config.CreateChild("jobListeners");
@@ -110,8 +175,37 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         }
 
         [Test]
-        public void TriggerListeners() {
-            using (var c = new WindsorContainer()) {
+
+        public void NoConfig_throws()
+        {
+            Assert.Throws(typeof(FacilityException), () =>
+            {
+                using (var c = new WindsorContainer())
+                {
+                    c.AddFacility("quartz", new QuartzFacility());
+                }
+            });
+        }
+
+        [Test]
+        public void NoProps_throws()
+        {
+            Assert.Throws(typeof(FacilityException), () =>
+            {
+                using (var c = new WindsorContainer())
+                {
+                    c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz",
+                        new MutableConfiguration("facility"));
+                    c.AddFacility("quartz", new QuartzFacility());
+                }
+            });
+        }
+
+        [Test]
+        public void TriggerListeners()
+        {
+            using (var c = new WindsorContainer())
+            {
                 var config = new MutableConfiguration("facility");
                 config.CreateChild("quartz").CreateChild("item", "qwe").Attribute("key", "qq");
                 var listenerConfig = config.CreateChild("triggerListeners");
@@ -127,57 +221,9 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetTriggerListeners())
                     Console.WriteLine(l);
-                var trigli = scheduler.ListenerManager.GetTriggerListener(typeof(SomeTriggerListener).AssemblyQualifiedName);
+                var trigli =
+                    scheduler.ListenerManager.GetTriggerListener(typeof(SomeTriggerListener).AssemblyQualifiedName);
                 Assert.IsNotNull(trigli);
-            }
-        }
-
-        [Test]
-        public void FacilityRegistersReleasingJobListener() {
-            using (var c = new WindsorContainer()) {
-                var config = new MutableConfiguration("facility");
-                config.CreateChild("quartz");
-                c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
-                c.AddFacility("quartz", new QuartzFacility());
-                var scheduler = c.Resolve<IScheduler>();
-                //Assert.IsNotNull(scheduler.GlobalJobListeners);
-                //Assert.AreEqual(2, scheduler.GlobalJobListeners.Count);
-                Assert.IsAssignableFrom(typeof(ReleasingJobListener), scheduler.ListenerManager.GetJobListeners()[0]);
-            }
-        }
-
-        [Test]
-        public void DisposableJobIsDisposed() {
-            using (var c = new WindsorContainer()) {
-                c.Register(Component.For<DisposableJob>().LifeStyle.Transient);
-                var config = new MutableConfiguration("facility");
-                config.CreateChild("quartz");
-                c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
-                c.AddFacility("quartz", new QuartzFacility());
-                var scheduler = c.Resolve<IScheduler>();
-                var jobDetail = JobBuilder.Create<DisposableJob>().WithIdentity("somejob").Build();
-                var trigger = TriggerBuilder.Create().WithIdentity("sometrigger").WithSimpleSchedule(s => s.WithIntervalInSeconds(1)).Build();
-                scheduler.ScheduleJob(jobDetail, trigger);
-                Assert.IsFalse(DisposableJob.Disposed);
-                scheduler.Start();
-                Thread.Sleep(1000);
-                Assert.IsTrue(DisposableJob.Disposed);
-            }
-        }
-
-        class DisposableJob : IJob, IDisposable
-        {
-            public static bool Disposed = false;
-
-            public void Dispose()
-            {
-                Console.WriteLine("Dispose");
-                Disposed = true;
-            }
-
-            public void Execute(IJobExecutionContext context)
-            {
-                Console.WriteLine("Execute");
             }
         }
     }

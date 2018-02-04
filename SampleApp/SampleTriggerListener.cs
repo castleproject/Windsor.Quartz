@@ -1,29 +1,60 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 
 namespace SampleApp {
-	public class SampleTriggerListener : ITriggerListener {
-		public void TriggerFired(ITrigger trigger, IJobExecutionContext context) {
-			Console.WriteLine(Name + ".TriggerFired");
-		}
+    public class SampleTriggerListener : ITriggerListener
+    {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="SampleTriggerListener" /> class.
+        /// </summary>
+        public SampleTriggerListener()
+        {
+            Name = GetType().Name;
+        }
 
-		public bool VetoJobExecution(ITrigger trigger, IJobExecutionContext context) {
-			Console.WriteLine(Name + ".VetoJobExecution");
-			return false;
-		}
+        public async Task TriggerFired(ITrigger trigger, IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage("JobToBeExecuted", token);
+        }
 
-		public void TriggerMisfired(ITrigger trigger) {
-			Console.WriteLine(Name + ".TriggerMisfired");
-		}
+        public async Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
+        {
+            return await WriteMesssageWithBoolResult("VetoJobExecution", false, token);
+        }
 
-		public void TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode) {
-			Console.WriteLine(Name + ".TriggerComplete");
-		}
+        public async Task TriggerMisfired(ITrigger trigger, CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage("TriggerMisfired", token);
+        }
 
-		public string Name { get; set; }
+        public async Task TriggerComplete(ITrigger trigger, IJobExecutionContext context,
+            SchedulerInstruction triggerInstructionCode, CancellationToken token = default(CancellationToken))
+        {
+            await WriteMesssage("TriggerComplete", token);
+        }
 
-		public SampleTriggerListener() {
-			Name = GetType().Name;
-		}
-	}
+        /// <summary>
+        ///     Get the name of the <see cref="T:Quartz.ITriggerListener" />.
+        /// </summary>
+        public string Name { get; set; }
+
+        private Task WriteMesssage(string message, CancellationToken token = default(CancellationToken))
+        {
+            return Task.Run(() => Console.WriteLine("{0}.{1}", GetType().Name, message), token);
+        }
+
+        private Task<bool> WriteMesssageWithBoolResult(string message, bool result,
+            CancellationToken token = default(CancellationToken))
+        {
+            return Task.Run(() =>
+            {
+                Console.WriteLine("{0}.{1}", GetType().Name, message);
+                return result;
+            }, token);
+        }
+    }
 }

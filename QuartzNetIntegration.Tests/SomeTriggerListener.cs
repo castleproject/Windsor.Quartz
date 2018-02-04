@@ -1,26 +1,31 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration.Tests {
-    public class SomeTriggerListener : ITriggerListener {
-        public void TriggerFired(ITrigger trigger, IJobExecutionContext context) {
-            throw new NotImplementedException();
+    public class SomeTriggerListener : ITriggerListener
+    {
+        public async Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        {
+            await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public bool VetoJobExecution(ITrigger trigger, IJobExecutionContext context) {
-            throw new NotImplementedException();
+        public async Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        {
+            return await Task.Run(new Func<bool>(() => throw new NotImplementedException()), token);
         }
 
-        public void TriggerMisfired(ITrigger trigger) {
-            throw new NotImplementedException();
+        public async Task TriggerMisfired(ITrigger trigger, CancellationToken token = default(CancellationToken))
+        {
+            await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public void TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode) {
-            throw new NotImplementedException();
+        public async Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken token = default(CancellationToken))
+        {
+            await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public string Name {
-            get { return GetType().AssemblyQualifiedName; }
-        }
+        public string Name => GetType().AssemblyQualifiedName;
     }
 }

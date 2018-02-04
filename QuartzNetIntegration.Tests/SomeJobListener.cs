@@ -1,22 +1,60 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Quartz;
 
 namespace Castle.Facilities.QuartzIntegration.Tests {
-    public class SomeJobListener : IJobListener {
-        public void JobToBeExecuted(IJobExecutionContext context) {
-            throw new NotImplementedException();
+    /// <summary>
+    /// Some job listener
+    /// </summary>
+    /// <seealso cref="Quartz.IJobListener" />
+    public class SomeJobListener : IJobListener
+    {
+        /// <summary>
+        /// Jobs to be executed.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        /// <exception cref="T:System.NotImplementedException"></exception>
+        /// <inheritdoc />
+        public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        {
+            await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public void JobExecutionVetoed(IJobExecutionContext context) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Jobs the execution vetoed.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        /// <exception cref="T:System.NotImplementedException"></exception>
+        /// <inheritdoc />
+        public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        {
+            await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public void JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Jobs the was executed.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="jobException">The job exception.</param>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        /// <exception cref="T:System.NotImplementedException"></exception>
+        /// <inheritdoc />
+        public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken token = default(CancellationToken))
+        {
+            await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public string Name {
-            get { return GetType().AssemblyQualifiedName; }
-        }
+        /// <summary>
+        /// Get the name of the <see cref="T:Quartz.IJobListener" />.
+        /// </summary>
+        /// <inheritdoc />
+        public string Name => GetType().AssemblyQualifiedName;
     }
 }

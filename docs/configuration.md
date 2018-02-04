@@ -35,10 +35,9 @@ The job class (in this case `SampleJob`) type needs to be registered as a compon
       <facility id="quartznet" type="Castle.Facilities.QuartzIntegration.QuartzFacility, Castle.Facilities.QuartzIntegration">
         <quartz>
           <item key="quartz.scheduler.instanceName">XmlConfiguredInstance</item>
-          <item key="quartz.threadPool.type">Quartz.Simpl.SimpleThreadPool, Quartz</item>
+          <item key="quartz.threadPool.type">Quartz.Simpl.DefaultThreadPool, Quartz</item>
           <item key="quartz.threadPool.threadCount">5</item>
-          <item key="quartz.threadPool.threadPriority">Normal</item>
-          <item key="quartz.plugin.xml.type">Quartz.Plugin.Xml.JobInitializationPlugin, Quartz</item>
+          <item key="quartz.plugin.xml.type">Quartz.Plugin.Xml.JobInitializationPlugin, Quartz.Plugins</item>
           <item key="quartz.plugin.xml.overwriteExistingJobs">true</item>
           <item key="quartz.plugin.xml.scanInterval">10</item>
         </quartz>
@@ -78,10 +77,9 @@ The facility also lets Windsor manage Quartz listeners. To do this you have to r
         </triggerListeners>
         <quartz>
           <item key="quartz.scheduler.instanceName">XmlConfiguredInstance</item>
-          <item key="quartz.threadPool.type">Quartz.Simpl.SimpleThreadPool, Quartz</item>
+          <item key="quartz.threadPool.type">Quartz.Simpl.DefaultThreadPool, Quartz</item>
           <item key="quartz.threadPool.threadCount">5</item>
-          <item key="quartz.threadPool.threadPriority">Normal</item>
-          <item key="quartz.plugin.xml.type">Quartz.Plugin.Xml.JobInitializationPlugin, Quartz</item>
+          <item key="quartz.plugin.xml.type">Quartz.Plugin.Xml.JobInitializationPlugin, Quartz.Plugins</item>
           <item key="quartz.plugin.xml.overwriteExistingJobs">true</item>
           <item key="quartz.plugin.xml.scanInterval">10</item>
         </quartz>
