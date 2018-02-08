@@ -325,5 +325,4 @@ ASALocalRun/
 /LicenseDeskSolution/files
 
 packages/*
-.nuget/*.exe
 *.nupkg
