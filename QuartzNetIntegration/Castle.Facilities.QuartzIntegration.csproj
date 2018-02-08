@@ -79,4 +79,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>$(SolutionDir)\.nuget\nuget.exe restore $(SolutionDir)\QuartzNetIntegration.sln</PreBuildEvent>
+  </PropertyGroup>
 </Project>
