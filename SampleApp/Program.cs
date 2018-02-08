@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 
-namespace SampleApp {
+namespace Castle.Facilities.QuartzIntegration.SampleApp {
     internal class Program {
         private static void Main(string[] args) {
             var container = new WindsorContainer(new XmlInterpreter());

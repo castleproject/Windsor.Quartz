@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace SampleApp
+namespace Castle.Facilities.QuartzIntegration.SampleApp
 {
     public class SampleJobListener : IJobListener
     {
