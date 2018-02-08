@@ -9,6 +9,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.Facilities.QuartzInt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Castle.Facilities.QuartzIntegration.SampleApp", "SampleApp\Castle.Facilities.QuartzIntegration.SampleApp.csproj", "{25A00FEE-CDBB-4704-8D91-1BEEE9089A66}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{83615B8C-E19F-4621-8F06-C0498F7FC25F}"
+	ProjectSection(SolutionItems) = preProject
+		License.txt = License.txt
+		Quartz.Windsor.nuspec = Quartz.Windsor.nuspec
+		README.md = README.md
+		release.bat = release.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{2A8EE5F1-4D36-4D2C-9935-23C32BE15F1E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\configuration.md = docs\configuration.md
+		docs\markdownlint.rb = docs\markdownlint.rb
+		docs\vnext-plans.md = docs\vnext-plans.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +45,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A8EE5F1-4D36-4D2C-9935-23C32BE15F1E} = {83615B8C-E19F-4621-8F06-C0498F7FC25F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B88EBBD6-6C1E-4AE1-A1ED-7BCDC11ABCC8}
