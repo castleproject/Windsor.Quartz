@@ -27,3 +27,8 @@ before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: dotnet restore ./src/CastleQuartzFacility.sln  --verbosity minimal
+  
+after_build:
+  - cmd: dotnet pack ./src/Castle.Facilities.Quartz/Castle.Facilities.Quartz.csproj --configuration Release
+  
+  
