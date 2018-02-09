@@ -35,6 +35,10 @@ build_script:
 test_script:
   - cmd: dotnet test ./src/Castle.Facilities.Quartz.Tests/Castle.Facilities.Quartz.Tests.csproj
   
+artifacts:
+  - path: '**\*.nupkg'
+    type: 'NuGetPackage'
+ 
 #after_build:
   #- cmd: dotnet pack ./src/Castle.Facilities.Quartz/Castle.Facilities.Quartz.csproj --configuration Release
   
