@@ -2,9 +2,11 @@ version: 0.4.0.{build}
 image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
+init:
+- cmd: git config --global core.autocrlf true
 before_build:
-- cmd: dotnet restore
-build:
-  publish_nuget: true
-  include_nuget_references: true
-  verbosity: minimal
+- cmd:
+  - cmd: dotnet --version
+  - cmd: dotnet restore ./src/Castle.Facilities.QuartzIntegration/Castle.Facilities.Quartz.csproj --verbosity m  
+build_script:
+  - cmd: dotnet publish ./src/Castle.Facilities.QuartzIntegration/Castle.Facilities.Quartz.csproj
