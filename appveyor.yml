@@ -1,4 +1,4 @@
-version: '0.4.0.{build}'
+version: 'buildnumber.{build}'
 
 image: Visual Studio 2017
 
@@ -30,7 +30,7 @@ before_build:
 
 build_script:
   - cmd: dotnet build ./src/CastleQuartzFacility.sln  --configuration Release
-  - cmd: dotnet pack ./src/CastleQuartzFacility.sln  --configuration Release /p:Version={version}
+  - cmd: dotnet pack ./src/CastleQuartzFacility.sln  --configuration Release
 
 test_script:
   - cmd: dotnet test ./src/Castle.Facilities.Quartz.Tests/Castle.Facilities.Quartz.Tests.csproj
