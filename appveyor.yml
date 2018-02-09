@@ -19,11 +19,11 @@ install:
   
 build:
   project: ./src/CastleQuartzFacility.sln
-  verbosity: normal
+  verbosity: minimal
   publish_nuget: true
  
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
-  - cmd: dotnet restore ./src/CastleQuartzFacility.sln  --verbosity m
+  - cmd: dotnet restore ./src/CastleQuartzFacility.sln  --verbosity minimal

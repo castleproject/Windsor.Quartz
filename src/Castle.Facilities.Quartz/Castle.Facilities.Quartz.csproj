@@ -17,6 +17,11 @@
 		<FileVersion>0.4.0.0</FileVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
+	  <DefineConstants>TRACE;RELEASE</DefineConstants>
+	  <OutputPath>bin\Release\</OutputPath>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <PackageReference Include="Castle.Core" version="4.2.1" />
 	  <PackageReference Include="Castle.Windsor" version="4.1.0" />
