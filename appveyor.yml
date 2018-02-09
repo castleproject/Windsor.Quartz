@@ -26,11 +26,11 @@ before_build:
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
-  - cmd: dotnet pack ./src/Castle.Facilities.Quartz/Castle.Facilities.Quartz.csproj --configuration Release
+  - cmd: dotnet restore ./src/CastleQuartzFacility.sln
 
 build_script:
   - cmd: dotnet build ./src/CastleQuartzFacility.sln  --configuration Release
-  - cmd: dotnet build ./src/CastleQuartzFacility.sln  --configuration Release
+  - cmd: dotnet pack ./src/CastleQuartzFacility.sln  --configuration Release
 
 test_script:
   - cmd: dotnet test ./src/Castle.Facilities.Quartz.Tests/Castle.Facilities.Quartz.Tests.csproj
