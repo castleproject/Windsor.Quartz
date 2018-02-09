@@ -19,7 +19,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Castle.Facilities.QuartzIntegration\Castle.Facilities.Quartz.csproj" />
+	  <ProjectReference Include="..\Castle.Facilities.Quartz\Castle.Facilities.Quartz.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

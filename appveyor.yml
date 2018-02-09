@@ -27,5 +27,3 @@ before_build:
   - cmd: dotnet --version
   # Display minimal restore text
   - cmd: dotnet restore ./src/CastleQuartzFacility.sln  --verbosity m
-  
-                        
