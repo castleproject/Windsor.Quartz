@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
     <AssemblyName>Castle.Facilities.Quartz.Tests</AssemblyName>
     <RootNamespace>Castle.Facilities.Quartz.Tests</RootNamespace>
+	<IsPackable>false</IsPackable>
   </PropertyGroup>
 
 
