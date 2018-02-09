@@ -26,7 +26,6 @@ before_build:
   # Display .NET Core version
   - cmd: dotnet --version
   # Display minimal restore text
-  - cmd: 
-    - dotnet restore ./src/Castle.Facilities.Quartz/Castle.Facilities.Quartz.csproj  --verbosity m
-    - dotnet restore ./src/Castle.Facilities.Quartz.Tests/Castle.Facilities.Quartz.Tests.csproj  --verbosity m
-    - dotnet restore ./src/Castle.Facilities.Quartz.SampleApp/Castle.Facilities.Quartz.SampleApp.csproj  --verbosity m
+  - cmd: dotnet restore ./src/Castle.Facilities.Quartz/Castle.Facilities.Quartz.csproj  --verbosity m
+  - cmd: dotnet restore ./src/Castle.Facilities.Quartz.Tests/Castle.Facilities.Quartz.Tests.csproj  --verbosity m
+  - cmd: dotnet restore ./src/Castle.Facilities.Quartz.SampleApp/Castle.Facilities.Quartz.SampleApp.csproj  --verbosity m
