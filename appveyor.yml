@@ -30,7 +30,7 @@ before_build:
 
 build_script:
   - cmd: dotnet build ./src/CastleQuartzFacility.sln  --configuration Release
-  - cmd: dotnet pack ./src/CastleQuartzFacility.sln  --configuration Release
+  - cmd: dotnet pack ./src/CastleQuartzFacility.sln  --configuration Release /p:Version={version}
 
 test_script:
   - cmd: dotnet test ./src/Castle.Facilities.Quartz.Tests/Castle.Facilities.Quartz.Tests.csproj
@@ -38,8 +38,3 @@ test_script:
 artifacts:
   - path: '**\*.nupkg'
     type: 'NuGetPackage'
- 
-#after_build:
-  #- cmd: dotnet pack ./src/Castle.Facilities.Quartz/Castle.Facilities.Quartz.csproj --configuration Release
-  
-  
