@@ -2,9 +2,15 @@
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp {
+namespace Castle.Facilities.Quartz.SampleApp
+{
     public class SampleJob : IJob, IDisposable
     {
+        public void Dispose()
+        {
+            Console.WriteLine("disposing...");
+        }
+
         /// <summary>
         ///     Called by the <see cref="T:Quartz.IScheduler" /> when a <see cref="T:Quartz.ITrigger" />
         ///     fires that is associated with the <see cref="T:Quartz.IJob" />.
@@ -23,11 +29,6 @@ namespace Castle.Facilities.Quartz.SampleApp {
         public async Task Execute(IJobExecutionContext context)
         {
             await Task.Run(() => { Console.WriteLine("Hello world!"); });
-        }
-
-        public void Dispose()
-        {
-            Console.WriteLine("disposing...");
         }
     }
 }

@@ -11,8 +11,8 @@ using Quartz.Impl;
 using Quartz.Impl.Matchers;
 using Quartz.Spi;
 
-namespace Castle.Facilities.Quartz {
-
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
     ///     Quartz scheduler implementation
     /// </summary>
@@ -1162,7 +1162,7 @@ namespace Castle.Facilities.Quartz {
                 {
                     if (!(jobListenerDictionaryEntry.Value is IList)) continue;
 
-                    foreach (IJobListener jobListener in (IList)jobListenerDictionaryEntry.Value)
+                    foreach (IJobListener jobListener in (IList) jobListenerDictionaryEntry.Value)
                         _scheduler.ListenerManager.AddJobListener(jobListener);
                 }
             }
@@ -1182,7 +1182,7 @@ namespace Castle.Facilities.Quartz {
                 {
                     if (!(triggerListenerDictionaryEntry.Value is IList)) continue;
 
-                    foreach (ITriggerListener triggerListener in (IList)triggerListenerDictionaryEntry.Value)
+                    foreach (ITriggerListener triggerListener in (IList) triggerListenerDictionaryEntry.Value)
                         _scheduler.ListenerManager.AddTriggerListener(triggerListener);
                 }
             }

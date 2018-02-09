@@ -3,15 +3,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.Tests {
+namespace Castle.Facilities.Quartz.Tests
+{
     public class SomeTriggerListener : ITriggerListener
     {
-        public async Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        public async Task TriggerFired(ITrigger trigger, IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public async Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        public async Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
         {
             return await Task.Run(new Func<bool>(() => throw new NotImplementedException()), token);
         }
@@ -21,7 +24,8 @@ namespace Castle.Facilities.Quartz.Tests {
             await Task.Run(() => throw new NotImplementedException(), token);
         }
 
-        public async Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken token = default(CancellationToken))
+        public async Task TriggerComplete(ITrigger trigger, IJobExecutionContext context,
+            SchedulerInstruction triggerInstructionCode, CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => throw new NotImplementedException(), token);
         }

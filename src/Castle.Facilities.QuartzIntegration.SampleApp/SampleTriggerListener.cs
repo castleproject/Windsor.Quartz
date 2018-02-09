@@ -3,7 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp {
+namespace Castle.Facilities.Quartz.SampleApp
+{
     public class SampleTriggerListener : ITriggerListener
     {
         /// <summary>

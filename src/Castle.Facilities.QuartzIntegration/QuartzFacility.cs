@@ -5,16 +5,18 @@ using Quartz;
 using Quartz.Job;
 using Quartz.Spi;
 
-namespace Castle.Facilities.Quartz {
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
-    /// Castle facility for Quartz.NET
+    ///     Castle facility for Quartz.NET
     /// </summary>
     /// <seealso cref="Castle.MicroKernel.Facilities.AbstractFacility" />
     public class QuartzFacility : AbstractFacility
     {
         protected override void Init()
         {
-            Kernel.ConfigurationStore.AddComponentConfiguration(typeof(QuartzNetScheduler).AssemblyQualifiedName, BuildConfig(FacilityConfig));
+            Kernel.ConfigurationStore.AddComponentConfiguration(typeof(QuartzNetScheduler).AssemblyQualifiedName,
+                BuildConfig(FacilityConfig));
             AddComponent<FileScanJob>();
             AddComponent<IJobScheduler, QuartzNetSimpleScheduler>();
             AddComponent<IJobFactory, WindsorJobFactory>();
@@ -40,7 +42,8 @@ namespace Castle.Facilities.Quartz {
 
             var globalTriggerListeners = config.Children["globalTriggerListeners"];
             if (globalTriggerListeners != null)
-                BuildServiceArray<ITriggerListener>(globalTriggerListeners, parameters.CreateChild("SetGlobalTriggerListeners"));
+                BuildServiceArray<ITriggerListener>(globalTriggerListeners,
+                    parameters.CreateChild("SetGlobalTriggerListeners"));
 
             var jobListeners = config.Children["jobListeners"];
             if (jobListeners != null)
@@ -48,11 +51,13 @@ namespace Castle.Facilities.Quartz {
 
             var triggerListeners = config.Children["triggerListeners"];
             if (triggerListeners != null)
-                BuildServiceDictionary<string, ITriggerListener[]>(triggerListeners, parameters.CreateChild("triggerListeners"));
+                BuildServiceDictionary<string, ITriggerListener[]>(triggerListeners,
+                    parameters.CreateChild("triggerListeners"));
 
             var schedulerListeners = config.Children["schedulerListeners"];
             if (schedulerListeners != null)
-                BuildServiceArray<ISchedulerListener>(schedulerListeners, parameters.CreateChild("SetSchedulerListeners"));
+                BuildServiceArray<ISchedulerListener>(schedulerListeners,
+                    parameters.CreateChild("SetSchedulerListeners"));
 
             return componentConfig;
         }
@@ -62,7 +67,7 @@ namespace Castle.Facilities.Quartz {
             var dict = parameters.CreateChild("dictionary");
             dict.Attribute("keyType", typeof(TKey).AssemblyQualifiedName);
             dict.Attribute("valueType", typeof(TValue).AssemblyQualifiedName);
-            foreach (IConfiguration c in config.Children)
+            foreach (var c in config.Children)
             {
                 var job = dict.CreateChild("entry")
                     .Attribute("key", c.Attributes["name"]);
@@ -74,42 +79,34 @@ namespace Castle.Facilities.Quartz {
         {
             var array = parameters.CreateChild("list");
             array.Attribute("type", typeof(T).AssemblyQualifiedName);
-            foreach (IConfiguration c in config.Children)
-            {
-                array.CreateChild("item", c.Value);
-            }
+            foreach (var c in config.Children) array.CreateChild("item", c.Value);
         }
 
         internal void BuildServiceArray<T>(IConfiguration config, MutableConfiguration parameters)
         {
             var array = parameters.CreateChild("array");
             array.Attribute("type", typeof(T).AssemblyQualifiedName);
-            foreach (IConfiguration c in config.Children)
-            {
-                array.CreateChild("item", c.Value);
-            }
+            foreach (var c in config.Children) array.CreateChild("item", c.Value);
         }
 
         internal void BuildProps(IConfiguration config, MutableConfiguration props)
         {
             var dict = props.CreateChild("dictionary");
-            foreach (IConfiguration c in config.Children)
-            {
+            foreach (var c in config.Children)
                 dict.CreateChild("item", c.Value)
                     .Attribute("key", c.Attributes["key"]);
-            }
         }
 
         internal string AddComponent<T>()
         {
-            string key = typeof(T).AssemblyQualifiedName;
+            var key = typeof(T).AssemblyQualifiedName;
             Kernel.Register(Component.For(typeof(T)).Named(key));
             return key;
         }
 
         internal string AddComponent<I, T>() where T : I
         {
-            string key = typeof(T).AssemblyQualifiedName;
+            var key = typeof(T).AssemblyQualifiedName;
             Kernel.Register(Component.For(typeof(I)).ImplementedBy(typeof(T)).Named(key));
             return key;
         }
