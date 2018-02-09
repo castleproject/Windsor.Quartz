@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration.SampleApp {
+namespace Castle.Facilities.Quartz.SampleApp {
     public class SampleJob : IJob, IDisposable
     {
         /// <summary>

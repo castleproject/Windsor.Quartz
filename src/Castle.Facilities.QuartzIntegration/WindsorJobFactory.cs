@@ -2,7 +2,7 @@ using Castle.MicroKernel;
 using Quartz;
 using Quartz.Spi;
 
-namespace Castle.Facilities.QuartzIntegration {
+namespace Castle.Facilities.Quartz {
 
     /// <summary>
     /// Creates a Quartz job with Windsor

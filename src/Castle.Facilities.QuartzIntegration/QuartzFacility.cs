@@ -5,7 +5,7 @@ using Quartz;
 using Quartz.Job;
 using Quartz.Spi;
 
-namespace Castle.Facilities.QuartzIntegration {
+namespace Castle.Facilities.Quartz {
     /// <summary>
     /// Castle facility for Quartz.NET
     /// </summary>

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>Castle.Facilities.Quartz.Tests</AssemblyName>
+    <RootNamespace>Castle.Facilities.Quartz.Tests</RootNamespace>
+  </PropertyGroup>
+
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+	  <PackageReference Include="NUnit" Version="3.9.0" />
+	  <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Castle.Facilities.QuartzIntegration\Castle.Facilities.Quartz.csproj" />
+	</ItemGroup>
+</Project>

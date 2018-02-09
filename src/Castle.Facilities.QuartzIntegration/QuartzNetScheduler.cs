@@ -5,13 +5,13 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.Core;
+using Castle.MicroKernel;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
 using Quartz.Spi;
-using Castle.MicroKernel;
 
-namespace Castle.Facilities.QuartzIntegration {
+namespace Castle.Facilities.Quartz {
 
     /// <summary>
     ///     Quartz scheduler implementation

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration {
+namespace Castle.Facilities.Quartz {
 
     /// <summary>
     /// Light-weight job scheduler

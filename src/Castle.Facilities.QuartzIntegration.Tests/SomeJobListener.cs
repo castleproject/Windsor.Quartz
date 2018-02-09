@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration.Tests {
+namespace Castle.Facilities.Quartz.Tests {
     /// <summary>
     /// Some job listener
     /// </summary>

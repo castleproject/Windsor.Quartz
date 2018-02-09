@@ -1,14 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Quartz;
 using Castle.MicroKernel;
+using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration {
+namespace Castle.Facilities.Quartz {
 
     /// <summary>
     /// JobListener that will release Jobs out of the Kernel
     /// </summary>
-    /// <seealso cref="Quartz.IJobListener" />
+    /// <seealso cref="IJobListener" />
     /// <inheritdoc />
     public class ReleasingJobListener : IJobListener
     {

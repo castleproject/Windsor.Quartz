@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Handlers;
@@ -7,10 +9,8 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
 using Quartz;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Castle.Facilities.QuartzIntegration.Tests {
+namespace Castle.Facilities.Quartz.Tests {
     [TestFixture]
     public class FacilityTests
     {

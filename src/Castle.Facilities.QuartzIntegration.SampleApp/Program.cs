@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Castle.Windsor;
 using Castle.Windsor.Configuration.Interpreters;
 
-namespace Castle.Facilities.QuartzIntegration.SampleApp {
+namespace Castle.Facilities.Quartz.SampleApp {
     internal class Program {
         private static void Main(string[] args) {
-            var container = new WindsorContainer(new XmlInterpreter());
+            var container = new WindsorContainer(new XmlInterpreter("Quartz.config"));
 
             Console.WriteLine("Started");
 
