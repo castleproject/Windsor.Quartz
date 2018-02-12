@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;

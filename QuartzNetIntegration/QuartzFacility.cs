@@ -1,4 +1,4 @@
-﻿using Castle.Core.Configuration;
+using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Registration;
 using Quartz;
