@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.Core;
+using Castle.MicroKernel;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
 using Quartz.Spi;
-using Castle.MicroKernel;
 
-namespace Castle.Facilities.QuartzIntegration {
-
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
     ///     Quartz scheduler implementation
     /// </summary>
@@ -1162,7 +1162,7 @@ namespace Castle.Facilities.QuartzIntegration {
                 {
                     if (!(jobListenerDictionaryEntry.Value is IList)) continue;
 
-                    foreach (IJobListener jobListener in (IList)jobListenerDictionaryEntry.Value)
+                    foreach (IJobListener jobListener in (IList) jobListenerDictionaryEntry.Value)
                         _scheduler.ListenerManager.AddJobListener(jobListener);
                 }
             }
@@ -1182,7 +1182,7 @@ namespace Castle.Facilities.QuartzIntegration {
                 {
                     if (!(triggerListenerDictionaryEntry.Value is IList)) continue;
 
-                    foreach (ITriggerListener triggerListener in (IList)triggerListenerDictionaryEntry.Value)
+                    foreach (ITriggerListener triggerListener in (IList) triggerListenerDictionaryEntry.Value)
                         _scheduler.ListenerManager.AddTriggerListener(triggerListener);
                 }
             }
