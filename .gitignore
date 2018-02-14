@@ -321,6 +321,9 @@ ASALocalRun/
 # MSBuild Binary and Structured Log
 *.binlog
 
+#CUSTOM
+/LicenseDeskSolution/files
+
 packages/*
 .nuget/*.exe
 *.nupkg
