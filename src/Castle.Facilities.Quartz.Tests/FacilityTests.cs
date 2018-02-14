@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Handlers;
@@ -7,10 +9,9 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
 using Quartz;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Castle.Facilities.QuartzIntegration.Tests {
+namespace Castle.Facilities.Quartz.Tests
+{
     [TestFixture]
     public class FacilityTests
     {
@@ -64,7 +65,8 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
 
                 var scheduler = c.Resolve<IScheduler>();
                 var jobDetail = JobBuilder.Create<DisposableJob>().WithIdentity("somejob").Build();
-                var trigger = TriggerBuilder.Create().WithIdentity("sometrigger").WithSimpleSchedule(s => s.WithIntervalInSeconds(1)).Build();
+                var trigger = TriggerBuilder.Create().WithIdentity("sometrigger")
+                    .WithSimpleSchedule(s => s.WithIntervalInSeconds(1)).Build();
 
                 var task = scheduler.ScheduleJob(jobDetail, trigger);
                 task.Wait();
@@ -106,7 +108,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 c.Kernel.ConfigurationStore.AddFacilityConfiguration("quartz", config);
                 c.Register(Component.For<IJobListener>().ImplementedBy<SomeJobListener>().Named("jobli"));
                 c.AddFacility("quartz", new QuartzFacility());
-                var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
+                var scheduler = (QuartzNetScheduler) c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetJobListeners())
                     Console.WriteLine(l.Name);
                 Assert.AreEqual(2, scheduler.ListenerManager.GetJobListeners().Count);
@@ -142,7 +144,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 c.Register(Component.For<ITriggerListener>().ImplementedBy<SomeTriggerListener>().Named("jobli"));
                 c.AddFacility("quartz", new QuartzFacility());
 
-                var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
+                var scheduler = (QuartzNetScheduler) c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetTriggerListeners())
                     Console.WriteLine(l.Name);
                 Assert.AreEqual(1, scheduler.ListenerManager.GetTriggerListeners().Count);
@@ -166,7 +168,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 c.Register(Component.For<IJobListener>().ImplementedBy<SomeJobListener>().Named("jobli"));
                 c.AddFacility("quartz", new QuartzFacility());
 
-                var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
+                var scheduler = (QuartzNetScheduler) c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetJobListeners())
                     Console.WriteLine(l);
                 var jobli = scheduler.ListenerManager.GetJobListener(typeof(SomeJobListener).AssemblyQualifiedName);
@@ -175,7 +177,6 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         }
 
         [Test]
-
         public void NoConfig_throws()
         {
             Assert.Throws(typeof(FacilityException), () =>
@@ -218,7 +219,7 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
                 c.Register(Component.For<ITriggerListener>().ImplementedBy<SomeTriggerListener>().Named("trigli"));
                 c.AddFacility("quartz", new QuartzFacility());
 
-                var scheduler = (QuartzNetScheduler)c.Resolve<IScheduler>();
+                var scheduler = (QuartzNetScheduler) c.Resolve<IScheduler>();
                 foreach (var l in scheduler.ListenerManager.GetTriggerListeners())
                     Console.WriteLine(l);
                 var trigli =

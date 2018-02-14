@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Quartz;
 using Quartz.Impl.Matchers;
 
-namespace Castle.Facilities.QuartzIntegration {
-
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
     ///     Light-weight job scheduler
     /// </summary>
