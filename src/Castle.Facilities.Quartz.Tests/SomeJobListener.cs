@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration.Tests {
+namespace Castle.Facilities.Quartz.Tests
+{
     /// <summary>
     /// Some job listener
     /// </summary>
@@ -18,7 +19,8 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         /// <returns></returns>
         /// <exception cref="T:System.NotImplementedException"></exception>
         /// <inheritdoc />
-        public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        public async Task JobToBeExecuted(IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => throw new NotImplementedException(), token);
         }
@@ -31,7 +33,8 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         /// <returns></returns>
         /// <exception cref="T:System.NotImplementedException"></exception>
         /// <inheritdoc />
-        public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        public async Task JobExecutionVetoed(IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => throw new NotImplementedException(), token);
         }
@@ -46,7 +49,8 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         /// <exception cref="System.NotImplementedException"></exception>
         /// <exception cref="T:System.NotImplementedException"></exception>
         /// <inheritdoc />
-        public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken token = default(CancellationToken))
+        public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => throw new NotImplementedException(), token);
         }

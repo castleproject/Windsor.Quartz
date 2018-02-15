@@ -1,15 +1,14 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration {
-
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
     /// Light-weight job scheduler
     /// </summary>
     public interface IJobScheduler
     {
-
         /// <summary>
         /// Get all known jobs
         /// </summary>

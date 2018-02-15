@@ -1,14 +1,14 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Quartz;
 using Castle.MicroKernel;
+using Quartz;
 
-namespace Castle.Facilities.QuartzIntegration {
-
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
     /// JobListener that will release Jobs out of the Kernel
     /// </summary>
-    /// <seealso cref="Quartz.IJobListener" />
+    /// <seealso cref="IJobListener" />
     /// <inheritdoc />
     public class ReleasingJobListener : IJobListener
     {
@@ -34,7 +34,8 @@ namespace Castle.Facilities.QuartzIntegration {
         /// <returns></returns>
         /// <inheritdoc />
         /// <seealso cref="M:Quartz.IJobListener.JobToBeExecuted(Quartz.IJobExecutionContext)" />
-        public virtual async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        public virtual async Task JobExecutionVetoed(IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => _kernel.ReleaseComponent(context.JobInstance), token);
         }
@@ -53,7 +54,8 @@ namespace Castle.Facilities.QuartzIntegration {
         /// <returns></returns>
         /// <inheritdoc />
         /// <seealso cref="M:Quartz.IJobListener.JobExecutionVetoed(Quartz.IJobExecutionContext)" />
-        public virtual async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken token = default(CancellationToken))
+        public virtual async Task JobToBeExecuted(IJobExecutionContext context,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.FromResult<object>(null);
         }
@@ -68,7 +70,8 @@ namespace Castle.Facilities.QuartzIntegration {
         /// <param name="token">The token.</param>
         /// <returns></returns>
         /// <inheritdoc />
-        public virtual async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken token = default(CancellationToken))
+        public virtual async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException,
+            CancellationToken token = default(CancellationToken))
         {
             await Task.Run(() => _kernel.ReleaseComponent(context.JobInstance), token);
         }

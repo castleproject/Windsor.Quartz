@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace SampleApp {
+namespace Castle.Facilities.Quartz.SampleApp
+{
     public class SampleTriggerListener : ITriggerListener
     {
         /// <summary>

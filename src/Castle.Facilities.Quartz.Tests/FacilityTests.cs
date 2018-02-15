@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Handlers;
@@ -7,10 +9,9 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using NUnit.Framework;
 using Quartz;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Castle.Facilities.QuartzIntegration.Tests {
+namespace Castle.Facilities.Quartz.Tests
+{
     [TestFixture]
     public class FacilityTests
     {
@@ -64,7 +65,10 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
 
                 var scheduler = c.Resolve<IScheduler>();
                 var jobDetail = JobBuilder.Create<DisposableJob>().WithIdentity("somejob").Build();
-                var trigger = TriggerBuilder.Create().WithIdentity("sometrigger").WithSimpleSchedule(s => s.WithIntervalInSeconds(1)).Build();
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity("sometrigger")
+                    .WithSimpleSchedule(s => s.WithIntervalInSeconds(1))
+                    .Build();
 
                 var task = scheduler.ScheduleJob(jobDetail, trigger);
                 task.Wait();
@@ -175,7 +179,6 @@ namespace Castle.Facilities.QuartzIntegration.Tests {
         }
 
         [Test]
-
         public void NoConfig_throws()
         {
             Assert.Throws(typeof(FacilityException), () =>

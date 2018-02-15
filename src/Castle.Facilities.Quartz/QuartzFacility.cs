@@ -1,11 +1,12 @@
-using Castle.Core.Configuration;
+﻿using Castle.Core.Configuration;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Registration;
 using Quartz;
 using Quartz.Job;
 using Quartz.Spi;
 
-namespace Castle.Facilities.QuartzIntegration {
+namespace Castle.Facilities.Quartz
+{
     /// <summary>
     /// Castle facility for Quartz.NET
     /// </summary>
@@ -62,7 +63,7 @@ namespace Castle.Facilities.QuartzIntegration {
             var dict = parameters.CreateChild("dictionary");
             dict.Attribute("keyType", typeof(TKey).AssemblyQualifiedName);
             dict.Attribute("valueType", typeof(TValue).AssemblyQualifiedName);
-            foreach (IConfiguration c in config.Children)
+            foreach (var c in config.Children)
             {
                 var job = dict.CreateChild("entry")
                     .Attribute("key", c.Attributes["name"]);
@@ -74,7 +75,7 @@ namespace Castle.Facilities.QuartzIntegration {
         {
             var array = parameters.CreateChild("list");
             array.Attribute("type", typeof(T).AssemblyQualifiedName);
-            foreach (IConfiguration c in config.Children)
+            foreach (var c in config.Children)
             {
                 array.CreateChild("item", c.Value);
             }
@@ -84,7 +85,7 @@ namespace Castle.Facilities.QuartzIntegration {
         {
             var array = parameters.CreateChild("array");
             array.Attribute("type", typeof(T).AssemblyQualifiedName);
-            foreach (IConfiguration c in config.Children)
+            foreach (var c in config.Children)
             {
                 array.CreateChild("item", c.Value);
             }
@@ -93,7 +94,7 @@ namespace Castle.Facilities.QuartzIntegration {
         internal void BuildProps(IConfiguration config, MutableConfiguration props)
         {
             var dict = props.CreateChild("dictionary");
-            foreach (IConfiguration c in config.Children)
+            foreach (var c in config.Children)
             {
                 dict.CreateChild("item", c.Value)
                     .Attribute("key", c.Attributes["key"]);
@@ -102,14 +103,14 @@ namespace Castle.Facilities.QuartzIntegration {
 
         internal string AddComponent<T>()
         {
-            string key = typeof(T).AssemblyQualifiedName;
+            var key = typeof(T).AssemblyQualifiedName;
             Kernel.Register(Component.For(typeof(T)).Named(key));
             return key;
         }
 
         internal string AddComponent<I, T>() where T : I
         {
-            string key = typeof(T).AssemblyQualifiedName;
+            var key = typeof(T).AssemblyQualifiedName;
             Kernel.Register(Component.For(typeof(I)).ImplementedBy(typeof(T)).Named(key));
             return key;
         }
