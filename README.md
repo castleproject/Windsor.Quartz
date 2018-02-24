@@ -1,10 +1,20 @@
-[Quartz.NET](http://quartznet.sourceforge.net/) is one of the most powerful scheduling libraries for .NET. A contrib project has been created to integrate Quartz.NET with Castle Windsor.
+# Castle Facility for Quartz.NET
 
-* [Source code]( https://github.com/castleprojectcontrib/QuartzNetIntegration)
-* [Binaries](https://github.com/castleprojectcontrib/QuartzNetIntegration/downloads)
-* [Quartz.Windsor on NuGet](http://www.nuget.org/packages/Quartz.Windsor/)
-* [Documentation](https://github.com/castleprojectcontrib/QuartzNetIntegration/tree/master/docs)
+## Introduction
+The Castle Facility for Quartz.NET provides a facility for the Quartz.NET job scheduler that easily integrates into Castle Windsor.
 
-More information about this facility:
+## Features
+* Provides a facade around Quartz.NET to schedule and manage jobs.
+* Facility can configure Quartz.NET through XML (app.config) or code.
 
-* [Windsor facility for Quartz.NET by Mauricio Scheffer](http://bugsquash.blogspot.com/2009/03/windsor-facility-for-quartznet.html)
+## Dependencies
+* Castle.Core 4.2.1
+* Castle.Windsor 4.1.0
+* Quartz 3.0.2
+
+## NuGet Package
+* https://www.nuget.org/packages/Quartz.Windsor/
+
+## Documentation
+* [Quartz.NET documentation](https://www.quartz-scheduler.net/)
+* [Facility configuration](docs/configuration.md)
