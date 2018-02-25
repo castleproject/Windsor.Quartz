@@ -7,11 +7,6 @@ The Castle Facility for Quartz.NET provides a facility for the Quartz.NET job sc
 * Provides a facade around Quartz.NET to schedule and manage jobs.
 * Facility can configure Quartz.NET easily through XML-configuration file.
 
-## Dependencies
-* Castle.Core 4.2.1
-* Castle.Windsor 4.1.0
-* Quartz 3.0.2
-
 ## NuGet Package
 * https://www.nuget.org/packages/Quartz.Windsor/
 
