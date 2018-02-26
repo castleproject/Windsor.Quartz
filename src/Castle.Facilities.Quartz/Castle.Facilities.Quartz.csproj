@@ -17,9 +17,10 @@
     <FileVersion>0.5.0.0</FileVersion>
     <Authors>Castle Project Contributors</Authors>
     <Copyright>Copyright (c) 2009-2018 Castle Project - http://www.castleproject.org/</Copyright>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/castleproject/Castle.Facilities.Quartz</PackageProjectUrl>
     <RepositoryUrl>https://github.com/castleproject/Castle.Facilities.Quartz</RepositoryUrl>
-    <PackageIconUrl>http://www.castleproject.org/img/castle-logo.png</PackageIconUrl>
+    <PackageIconUrl>http://www.castleproject.org/img/windsor-logo.png</PackageIconUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Version>0.5.0</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
