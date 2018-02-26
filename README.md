@@ -8,7 +8,7 @@ The Castle Facility for Quartz.NET provides a facility for the Quartz.NET job sc
 * Facility can configure Quartz.NET easily through XML-configuration file.
 
 ## NuGet Package
-* https://www.nuget.org/packages/Quartz.Windsor/ [![NuGet](https://img.shields.io/nuget/v/Quartz.Windsor.svg)](https://www.nuget.org/packages/Quartz.Windsor/)
+* https://www.nuget.org/packages/Castle.Facilities.Quartz/ [![NuGet](https://img.shields.io/nuget/v/Castle.Facilities.Quartz.svg)](https://www.nuget.org/packages/Castle.Facilities.Quartz/)
 
 ## Documentation
 * [Quartz.NET documentation](https://www.quartz-scheduler.net/)
