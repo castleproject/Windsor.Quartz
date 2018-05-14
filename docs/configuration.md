@@ -1,8 +1,8 @@
-# Quartz.NET Facility Configuration
+# Quartz.NET Facility
 
 ## Using the C# API
 
-### Configure facility using quartz properties (C#)
+### Configuring the facility using quartz properties (C#)
 
 By using following code sample, you will configure the scheduler with Quartz properties provided by code.
 You don't need Quartz properties in the app.config for this way of working.
@@ -22,7 +22,7 @@ container.AddFacility<QuartzFacility>(q =>
 );
 ```
 
-### Configure facility using quartz properties (app.config)
+### Configuring the facility using quartz properties (app.config)
 
 By using following code sample, you will configure the scheduler with Quartz properties provided in the app.config.
 You only need to add the facility to the container. The Quartz properties will be retrieved from the app.config automatically
@@ -32,7 +32,6 @@ You are not forced to use the StartableFacility. In case you don't want to use t
 var container = new WindsorContainer();
 container.AddFacility<StartableFacility>(f => f.DeferredStart());
 container.AddFacility<QuartzFacility>();
-);
 ```
 
 Add this configuration to the app.config xml file:
@@ -52,7 +51,7 @@ Add this configuration to the app.config xml file:
 ```
 
 
-### Attaching job, trigger and schedulerlisteners
+### Attaching job-, trigger- and scheduler-listeners
 
 You can attach job-, trigger- and schedulerlisteners by the C# API
 Use following code sample:

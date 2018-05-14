@@ -10,14 +10,7 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
     [TestFixture]
     public abstract class BaseUnitTest
     {
-        [SetUp]
-        public void OnSetup()
-        {
-            Container = CreateContainer();
-        }
-
         protected const string SchedulerInstanceName = "UnitTestScheduler";
-
         protected readonly Dictionary<string, string> QuartzProperties = new Dictionary<string, string>
         {
             {"quartz.scheduler.instanceName", SchedulerInstanceName},
@@ -27,6 +20,12 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
 
         protected IWindsorContainer Container;
 
+        [SetUp]
+        public void OnSetup()
+        {
+            Container = CreateContainer();
+        }
+
         protected abstract IWindsorContainer CreateContainer();
 
         protected void Sleep(int seconds)
@@ -35,18 +34,17 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
             var task = Task.Run(() => Thread.Sleep(seconds * 1000));
             task.Wait();
         }
-
         protected void ScheduleJob()
         {
-            var job = JobBuilder.Create<IJob>().WithIdentity("TestJob", "TestGroup").Build();
+            IJobDetail job = JobBuilder.Create<IJob>().WithIdentity("TestJob", "TestGroup").Build();
 
             var trigger = TriggerBuilder.Create()
                 .WithIdentity("TestJob_Trigger1", "TestGroup")
-                .WithSimpleSchedule(s =>
+                .WithSimpleSchedule(s => 
                     s.WithRepeatCount(1).WithIntervalInSeconds(1))
                 .Build();
 
-            var scheduler = Container.Resolve<IScheduler>();
+            IScheduler scheduler = Container.Resolve<IScheduler>();
             scheduler.ScheduleJob(job, trigger);
         }
     }
