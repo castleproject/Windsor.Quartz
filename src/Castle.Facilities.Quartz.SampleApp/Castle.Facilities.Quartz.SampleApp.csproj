@@ -21,10 +21,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Castle.Facilities.Quartz\Castle.Facilities.Quartz.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Quartz.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

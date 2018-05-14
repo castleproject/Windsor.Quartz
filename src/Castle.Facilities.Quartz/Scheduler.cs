@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.Core;
-using Castle.MicroKernel;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
@@ -16,21 +15,23 @@ namespace Castle.Facilities.Quartz
     /// <summary>
     ///     Quartz scheduler implementation
     /// </summary>
-    /// <seealso cref="Quartz.IScheduler" />
+    /// <seealso cref="IScheduler" />
     /// <seealso cref="Castle.Core.IStartable" />
     /// <seealso cref="System.IDisposable" />
-    public class QuartzNetScheduler : IScheduler, IStartable, IDisposable
+    public class Scheduler : IScheduler, IStartable, IDisposable
     {
-        private readonly NameValueCollection _properties = new NameValueCollection();
         private readonly IScheduler _scheduler;
+
+        #region Constructors
 
         /// <summary>
         ///     Constructs a Scheduler that uses Castle Windsor
         /// </summary>
         /// <param name="props">Properties</param>
         /// <param name="jobFactory">JobFactory</param>
-        /// <param name="kernel">Castle MicroKernel</param>
-        public QuartzNetScheduler(IDictionary<string, string> props, IJobFactory jobFactory, IKernel kernel)
+        /// <param name="releasingJobListener">Releasing JobListener</param>
+        public Scheduler(IDictionary<string, string> props, IJobFactory jobFactory,
+            IReleasingJobListener releasingJobListener)
         {
             //Create Scheduler
             _scheduler = CreateScheduler(props);
@@ -39,25 +40,55 @@ namespace Castle.Facilities.Quartz
             JobFactory = jobFactory;
 
             //Listener: Release jobs
-            _scheduler.ListenerManager.AddJobListener(new ReleasingJobListener(kernel));
+            _scheduler.ListenerManager.AddJobListener(releasingJobListener);
 
             //Properties
             WaitForJobsToCompleteAtShutdown = true; // default
         }
+
+        #endregion Constructors
+
+        #region Interface IJobScheduler implementation
+
+        /// <summary>
+        ///     Gets the job keys.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public async Task<JobKey[]> GetJobKeys(CancellationToken token = default(CancellationToken))
+        {
+            var jobGroupNames = await _scheduler.GetJobGroupNames(token);
+
+            var task = Task.Run(() =>
+            {
+                var jobGroupNamesArray = jobGroupNames.ToArray();
+                var jobGroupNamesLength = jobGroupNamesArray.Length;
+
+                var tasks = new Task<IReadOnlyCollection<JobKey>>[jobGroupNamesLength];
+
+                for (var index = 0; index < jobGroupNamesArray.Length; index++)
+                {
+                    var jobGroupName = jobGroupNamesArray[index];
+                    tasks[index] = _scheduler.GetJobKeys(GroupMatcher<JobKey>.GroupEquals(jobGroupName), token);
+                }
+
+                Task.WaitAll(tasks, token);
+
+                return tasks.SelectMany(x => x.Result).ToArray();
+            }, token);
+
+            return await task;
+        }
+
+        #endregion Interface IJobScheduler implementation
+
+        #region Properties
 
         /// <summary>
         ///     Wait for Jobs to finish when shutdown is triggered
         /// </summary>
         public bool WaitForJobsToCompleteAtShutdown { get; set; }
 
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Stop();
-        }
 
         /// <inheritdoc />
         /// <summary>
@@ -132,6 +163,67 @@ namespace Castle.Facilities.Quartz
         /// <seealso cref="P:Quartz.IScheduler.IsShutdown" />
         /// <seealso cref="P:Quartz.IScheduler.InStandbyMode" />
         public bool IsStarted => _scheduler.IsStarted;
+
+        #endregion Properties
+
+        #region Interface IDisposable implementation
+
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Stop();
+        }
+
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public async Task Dispose(CancellationToken token)
+        {
+            await Stop(token);
+        }
+
+        #endregion  Interface IDisposable implementation
+
+        #region Interface IStartable implementation
+
+        /// <summary>
+        ///     Starts this instance.
+        /// </summary>
+        /// <inheritdoc />
+        public void Start()
+        {
+            var startTask = Start(default(CancellationToken));
+            startTask.Wait();
+        }
+
+        /// <summary>
+        ///     Stops this instance.
+        /// </summary>
+        /// <inheritdoc />
+        public void Stop()
+        {
+            var stopTask = Stop(default(CancellationToken));
+            stopTask.Wait();
+        }
+
+        /// <summary>
+        ///     Stops this instance.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
+        public async Task Stop(CancellationToken token)
+        {
+            await _scheduler.Shutdown(WaitForJobsToCompleteAtShutdown, token);
+        }
+
+        #endregion
+
+        #region Interface IScheduler implementation
 
         /// <inheritdoc />
         /// <summary>
@@ -1063,129 +1155,22 @@ namespace Castle.Facilities.Quartz
             await _scheduler.Clear(token);
         }
 
-        /// <summary>
-        ///     Starts this instance.
-        /// </summary>
-        /// <inheritdoc />
-        public void Start()
-        {
-            var startTask = Start(default(CancellationToken));
-            startTask.Wait();
-        }
-
-        /// <summary>
-        ///     Stops this instance.
-        /// </summary>
-        /// <inheritdoc />
-        public void Stop()
-        {
-            var stopTask = Stop(default(CancellationToken));
-            stopTask.Wait();
-        }
 
         private IScheduler CreateScheduler(IDictionary<string, string> props)
         {
-            //Set properties
-            foreach (var prop in props.Keys)
-                _properties[prop] = props[prop];
+            var properties = new NameValueCollection();
 
-            //Create scheduler
-            var factory = new StdSchedulerFactory(_properties);
+            // Set properties
+            if (props != null)
+                foreach (var prop in props.Keys)
+                    properties[prop] = props[prop];
+
+            // Create scheduler
+            var factory = properties.Count == 0 ? new StdSchedulerFactory() : new StdSchedulerFactory(properties);
             var getSchedulerTask = factory.GetScheduler();
             getSchedulerTask.Wait();
 
             return getSchedulerTask.Result;
-        }
-
-        /// <summary>
-        ///     Stops this instance.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        public async Task Stop(CancellationToken token)
-        {
-            await _scheduler.Shutdown(WaitForJobsToCompleteAtShutdown, token);
-        }
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        /// <returns></returns>
-        public async Task Dispose(CancellationToken token)
-        {
-            await Stop(token);
-        }
-
-        #region Methods that are here for backwards-compatibility (maybe they aren't needed anymore)
-
-        /// <summary>
-        ///     Set by Castle via de configuration
-        /// </summary>
-        /// <remarks>This method is added for the backwards-compatibility with Quartz v1 and the QuartzFacility v1</remarks>
-        public IJobListener[] SetGlobalJobListeners
-        {
-            set
-            {
-                if (value != null)
-                    foreach (var jobListener in value)
-                        _scheduler.ListenerManager.AddJobListener(jobListener);
-            }
-        }
-
-        /// <summary>
-        ///     Set by Castle via de configuration
-        /// </summary>
-        /// <remarks>This method is added for the backwards-compatibility with Quartz v1 and the QuartzFacility v1</remarks>
-        public ITriggerListener[] SetGlobalTriggerListeners
-        {
-            set
-            {
-                if (value == null) return;
-
-                foreach (var triggerListener in value)
-                    _scheduler.ListenerManager.AddTriggerListener(triggerListener);
-            }
-        }
-
-        /// <summary>
-        ///     Set by Castle via de configuration
-        /// </summary>
-        /// <remarks>This method is added for the backwards-compatibility with Quartz v1 and the QuartzFacility v1</remarks>
-        public IDictionary JobListeners
-        {
-            set
-            {
-                if (value == null) return;
-
-                foreach (DictionaryEntry jobListenerDictionaryEntry in value)
-                {
-                    if (!(jobListenerDictionaryEntry.Value is IList)) continue;
-
-                    foreach (IJobListener jobListener in (IList)jobListenerDictionaryEntry.Value)
-                        _scheduler.ListenerManager.AddJobListener(jobListener);
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Set by Castle via de configuration
-        /// </summary>
-        /// <remarks>This method is added for the backwards-compatibility with Quartz v1 and the QuartzFacility v1</remarks>
-        public IDictionary TriggerListeners
-        {
-            set
-            {
-                if (value == null) return;
-
-                foreach (DictionaryEntry triggerListenerDictionaryEntry in value)
-                {
-                    if (!(triggerListenerDictionaryEntry.Value is IList)) continue;
-
-                    foreach (ITriggerListener triggerListener in (IList)triggerListenerDictionaryEntry.Value)
-                        _scheduler.ListenerManager.AddTriggerListener(triggerListener);
-                }
-            }
         }
 
         #endregion

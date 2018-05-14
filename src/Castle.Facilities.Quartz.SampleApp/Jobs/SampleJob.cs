@@ -2,9 +2,13 @@
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp
+namespace Castle.Facilities.Quartz.SampleApp.Jobs
 {
-    public class SampleJob : IJob, IDisposable
+    public interface ISampleJob : IJob, IDisposable
+    {
+    }
+
+    public class SampleJob : ISampleJob
     {
         public void Dispose()
         {
