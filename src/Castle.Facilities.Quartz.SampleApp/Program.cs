@@ -15,10 +15,10 @@ namespace Castle.Facilities.Quartz.SampleApp
     {
         private static void Main(string[] args)
         {
-            UsingCode();
+            UsingCodeWithoutStartableFacility();
         }
 
-        private static void UsingCode()
+        private static void UsingCodeWithoutStartableFacility()
         {
             using (var container = new WindsorContainer())
             {
@@ -31,7 +31,6 @@ namespace Castle.Facilities.Quartz.SampleApp
                 container.Register(Component.For<SampleJob>().ImplementedBy<SampleJob>());
 
                 // Add facilities
-                container.AddFacility<StartableFacility>(f => f.DeferredStart());
                 container.AddFacility<QuartzFacility>(q =>
                     q
                         .SetProperties(new Dictionary<string, string>
@@ -54,7 +53,46 @@ namespace Castle.Facilities.Quartz.SampleApp
                 Console.WriteLine("Started");
 
                 var scheduler = container.Resolve<IScheduler>();
-                var a = scheduler.SchedulerName;
+                scheduler.Start();
+                var task = Task.Run(() => Thread.Sleep(1000 * 1000));
+                task.Wait();
+            }
+        }
+        private static void UsingCodeWithStartableFacility()
+        {
+            using (var container = new WindsorContainer())
+            {
+                // Register listeners
+                container.Register(Component.For<ISampleJobListener>().ImplementedBy<SampleJobListener>());
+                container.Register(Component.For<ISampleSchedulerListener>().ImplementedBy<SampleSchedulerListener>());
+                container.Register(Component.For<ISampleTriggerListener>().ImplementedBy<SampleTriggerListener>());
+
+                // Register jobs
+                container.Register(Component.For<SampleJob>().ImplementedBy<SampleJob>());
+
+                // Add facilities
+                container.AddFacility<StartableFacility>();
+                container.AddFacility<QuartzFacility>(q =>
+                    q
+                        .SetProperties(new Dictionary<string, string>
+                        {
+                            {"quartz.scheduler.instanceName", "QuartzSchedulerConfiguredByCode"},
+                            {"quartz.threadPool.type", "Quartz.Simpl.DefaultThreadPool, Quartz"},
+                            {"quartz.threadPool.threadCount", "5"},
+                            {
+                                "quartz.plugin.xml.type",
+                                "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins"
+                            },
+                            {"quartz.plugin.xml.scanInterval", "10"},
+                            {"quartz.plugin.xml.fileNames", "~/quartz_jobs.xml"}
+                        })
+                        .SetJobListeners(new JobListener(container.Resolve<ISampleJobListener>()))
+                        .SetTriggerListeners(new TriggerListener(container.Resolve<ISampleTriggerListener>()))
+                        .SetSchedulerListeners(container.Resolve<ISampleSchedulerListener>())
+                );
+
+                Console.WriteLine("Started");
+
                 var task = Task.Run(() => Thread.Sleep(1000 * 1000));
                 task.Wait();
             }
