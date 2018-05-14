@@ -7,8 +7,8 @@ namespace Castle.Facilities.Quartz.SampleApp.Listeners
 {
     public interface ISampleJobListener : IJobListener
     {
-    }
 
+    }
     public class SampleJobListener : ISampleJobListener
     {
         public SampleJobListener()

@@ -1162,8 +1162,10 @@ namespace Castle.Facilities.Quartz
 
             // Set properties
             if (props != null)
+            {
                 foreach (var prop in props.Keys)
                     properties[prop] = props[prop];
+            }
 
             // Create scheduler
             var factory = properties.Count == 0 ? new StdSchedulerFactory() : new StdSchedulerFactory(properties);

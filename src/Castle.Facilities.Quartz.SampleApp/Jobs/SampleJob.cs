@@ -6,8 +6,8 @@ namespace Castle.Facilities.Quartz.SampleApp.Jobs
 {
     public interface ISampleJob : IJob, IDisposable
     {
-    }
 
+    }
     public class SampleJob : ISampleJob
     {
         public void Dispose()

@@ -12,12 +12,6 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
     [TestFixture]
     public class QuartzFacilityIntegrationTests
     {
-        [SetUp]
-        public void OnSetup()
-        {
-            _container = CreateContainer();
-        }
-
         public const string SchedulerInstanceName = "IntegrationTestScheduler";
         private IWindsorContainer _container;
 
@@ -28,10 +22,16 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
             {"quartz.threadPool.threadCount", "1"}
         };
 
+        [SetUp]
+        public void OnSetup()
+        {
+            _container = CreateContainer();
+        }
+
 
         private IWindsorContainer CreateContainer()
         {
-            var containerBuilder = new WindsorContainer()
+            IWindsorContainer containerBuilder = new WindsorContainer()
                 .Register(Component.For<ITestJobListener>().ImplementedBy<TestJobListener>().LifestyleSingleton())
                 .Register(Component.For<ITestJob>().ImplementedBy<TestJob>().LifestyleTransient())
                 .AddFacility<StartableFacility>(q => q.DeferredStart());
@@ -46,18 +46,21 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
             task.Wait();
         }
 
-        private void ScheduleJob()
+        [Test]
+        public void TestJobListener()
         {
-            var job = JobBuilder.Create<ITestJob>().WithIdentity("IntegrationTestJob", "IntegrationTestGroup").Build();
+            // Add Quartz
+            _container.AddFacility<QuartzFacility>(q =>
+                q.SetJobListeners(new JobListener(_container.Resolve<ITestJobListener>()))
+                    .SetProperties(QuartzProperties));
 
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity("IntegrationTestJob_Trigger1", "IntegrationTestGroup")
-                .WithSimpleSchedule(s =>
-                    s.WithRepeatCount(1).WithIntervalInSeconds(1))
-                .Build();
+            // Schedule Job
+            ScheduleJob();
+            Sleep(2);
 
-            var scheduler = _container.Resolve<IScheduler>();
-            scheduler.ScheduleJob(job, trigger);
+            // Assert
+            ITestJobListener listener = _container.Resolve<ITestJobListener>();
+            Assert.That(listener.HasFiredJobWasExecuted, Is.True);
         }
 
         [Test]
@@ -76,21 +79,18 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
             Assert.That(TestJob.IsDisposed, Is.True);
         }
 
-        [Test]
-        public void TestJobListener()
+        private void ScheduleJob()
         {
-            // Add Quartz
-            _container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(_container.Resolve<ITestJobListener>()))
-                    .SetProperties(QuartzProperties));
+            IJobDetail job = JobBuilder.Create<ITestJob>().WithIdentity("IntegrationTestJob", "IntegrationTestGroup").Build();
 
-            // Schedule Job
-            ScheduleJob();
-            Sleep(2);
+            var trigger = TriggerBuilder.Create()
+                .WithIdentity("IntegrationTestJob_Trigger1", "IntegrationTestGroup")
+                .WithSimpleSchedule(s =>
+                    s.WithRepeatCount(1).WithIntervalInSeconds(1))
+                .Build();
 
-            // Assert
-            var listener = _container.Resolve<ITestJobListener>();
-            Assert.That(listener.HasFiredJobWasExecuted, Is.True);
+            IScheduler scheduler = _container.Resolve<IScheduler>();
+            scheduler.ScheduleJob(job, trigger);
         }
     }
 }

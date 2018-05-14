@@ -72,11 +72,14 @@ namespace Castle.Facilities.Quartz
             var key = typeof(TComponent).AssemblyQualifiedName;
 
             var component = Component
-                .For<TService>()
-                .ImplementedBy<TComponent>()
-                .Named(key);
+                                .For<TService>()
+                                .ImplementedBy<TComponent>()
+                                .Named(key);
 
-            if (dynamicParameters != null) component.DynamicParameters(dynamicParameters);
+            if (dynamicParameters != null)
+            {
+                component.DynamicParameters(dynamicParameters);
+            }
 
             Kernel.Register(component);
 

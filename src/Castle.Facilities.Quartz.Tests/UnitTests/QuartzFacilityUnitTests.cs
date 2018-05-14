@@ -43,8 +43,7 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
                 .Returns(Task.Run(() => Console.WriteLine("JobListener - JobToBeExecuted")))
                 .Verifiable();
             TestJobListener
-                .Setup(m => m.JobWasExecuted(It.IsAny<IJobExecutionContext>(), It.IsAny<JobExecutionException>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(m => m.JobWasExecuted(It.IsAny<IJobExecutionContext>(), It.IsAny<JobExecutionException>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.Run(() => Console.WriteLine("JobListener - JobWasExecuted")))
                 .Verifiable();
 
@@ -52,13 +51,11 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
             TestTriggerListener
                 .SetupGet(p => p.Name).Returns("TestTriggerListener");
             TestTriggerListener
-                .Setup(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
-                    It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()))
+                .Setup(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(), It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.Run(() => Console.WriteLine("TriggerListener - TriggerComplete")))
                 .Verifiable();
             TestTriggerListener
-                .Setup(m => m.TriggerFired(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(m => m.TriggerFired(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.Run(() => Console.WriteLine("TriggerListener - TriggerFired")))
                 .Verifiable();
             TestTriggerListener
@@ -104,8 +101,7 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
                 .Returns(Task.Run(() => Console.WriteLine("SchedulerListener - JobsResumed")))
                 .Verifiable();
             TestSchedulerListener
-                .Setup(m => m.SchedulerError(It.IsAny<string>(), It.IsAny<SchedulerException>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(m => m.SchedulerError(It.IsAny<string>(), It.IsAny<SchedulerException>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.Run(() => Console.WriteLine("SchedulerListener - SchedulerError")))
                 .Verifiable();
             TestSchedulerListener
@@ -117,8 +113,7 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
                 .Returns(Task.Run(() => Console.WriteLine("SchedulerListener - SchedulerShutdown")))
                 .Verifiable();
             TestSchedulerListener
-                .Setup(m => m.SchedulerError(It.IsAny<string>(), It.IsAny<SchedulerException>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(m => m.SchedulerError(It.IsAny<string>(), It.IsAny<SchedulerException>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.Run(() => Console.WriteLine("SchedulerListener - SchedulerError")))
                 .Verifiable();
             TestSchedulerListener
@@ -139,8 +134,7 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
             return new WindsorContainer()
                 .Register(Component.For<IJobListener>().Instance(TestJobListener.Object).LifestyleTransient())
                 .Register(Component.For<ITriggerListener>().Instance(TestTriggerListener.Object).LifestyleTransient())
-                .Register(Component.For<ISchedulerListener>().Instance(TestSchedulerListener.Object)
-                    .LifestyleTransient())
+                .Register(Component.For<ISchedulerListener>().Instance(TestSchedulerListener.Object).LifestyleTransient())
                 .Register(Component.For<IJob>().Instance(TestJob.Object).LifestyleTransient())
                 .AddFacility<StartableFacility>(q => q.DeferredStart());
         }
@@ -163,29 +157,11 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         }
 
         [Test]
-        public void GlobalTriggerListenerFired()
-        {
-            // Add Quartz (with 1 triggerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>()))
-                    .SetProperties(QuartzProperties));
-
-            // Schedule Job
-            ScheduleJob();
-            Sleep(2);
-
-            // Assert
-            TestTriggerListener.Verify(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
-                It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()));
-        }
-
-        [Test]
         public void JobListenerFired()
         {
             // Add Quartz (with 1 joblistener)
             Container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(),
-                        new IMatcher<JobKey>[] {KeyMatcher<JobKey>.KeyEquals(new JobKey("TestJob", "TestGroup"))}))
+                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[] { KeyMatcher<JobKey>.KeyEquals(new JobKey("TestJob", "TestGroup")) }))
                     .SetProperties(QuartzProperties));
 
             // Schedule Job
@@ -203,8 +179,7 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         {
             // Add Quartz (with 1 joblistener)
             Container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(),
-                        new IMatcher<JobKey>[] {KeyMatcher<JobKey>.KeyEquals(new JobKey("FakeJob", "FakeGroup"))}))
+                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[] { KeyMatcher<JobKey>.KeyEquals(new JobKey("FakeJob", "FakeGroup")) }))
                     .SetProperties(QuartzProperties));
 
             // Schedule Job
@@ -212,9 +187,58 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
             Sleep(2);
 
             // Assert
-            TestJobListener.Verify(
-                m => m.JobWasExecuted(It.IsAny<IJobExecutionContext>(), It.IsAny<JobExecutionException>(),
-                    It.IsAny<CancellationToken>()), Times.Never);
+            TestJobListener.Verify(m => m.JobWasExecuted(It.IsAny<IJobExecutionContext>(), It.IsAny<JobExecutionException>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
+
+        [Test]
+        public void GlobalTriggerListenerFired()
+        {
+            // Add Quartz (with 1 triggerlistener)
+            Container.AddFacility<QuartzFacility>(q =>
+                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>()))
+                    .SetProperties(QuartzProperties));
+
+            // Schedule Job
+            ScheduleJob();
+            Sleep(2);
+
+            // Assert
+            TestTriggerListener.Verify(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
+                It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public void TriggerListenerFired()
+        {
+            // Add Quartz (with 1 triggerlistener)
+            Container.AddFacility<QuartzFacility>(q =>
+                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>(), new IMatcher<TriggerKey>[] { KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("TestJob_Trigger1", "TestGroup")) }))
+                    .SetProperties(QuartzProperties));
+
+            // Schedule Job
+            ScheduleJob();
+            Sleep(2);
+
+            // Assert
+            TestTriggerListener.Verify(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
+                It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public void TriggerListenerNotFired()
+        {
+            // Add Quartz (with 1 triggerlistener)
+            Container.AddFacility<QuartzFacility>(q =>
+                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>(), new IMatcher<TriggerKey>[] { KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("FakeTrigger", "FakeGroup")) }))
+                    .SetProperties(QuartzProperties));
+
+            // Schedule Job
+            ScheduleJob();
+            Sleep(2);
+
+            // Assert
+            TestTriggerListener.Verify(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
+                It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Test]
@@ -234,44 +258,6 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
             TestSchedulerListener.Verify(m => m.JobAdded(It.IsAny<IJobDetail>(), It.IsAny<CancellationToken>()));
             TestSchedulerListener.Verify(m => m.JobScheduled(It.IsAny<ITrigger>(), It.IsAny<CancellationToken>()));
             TestSchedulerListener.Verify(m => m.TriggerFinalized(It.IsAny<ITrigger>(), It.IsAny<CancellationToken>()));
-        }
-
-        [Test]
-        public void TriggerListenerFired()
-        {
-            // Add Quartz (with 1 triggerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>(),
-                        new IMatcher<TriggerKey>[]
-                            {KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("TestJob_Trigger1", "TestGroup"))}))
-                    .SetProperties(QuartzProperties));
-
-            // Schedule Job
-            ScheduleJob();
-            Sleep(2);
-
-            // Assert
-            TestTriggerListener.Verify(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
-                It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()));
-        }
-
-        [Test]
-        public void TriggerListenerNotFired()
-        {
-            // Add Quartz (with 1 triggerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>(),
-                        new IMatcher<TriggerKey>[]
-                            {KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("FakeTrigger", "FakeGroup"))}))
-                    .SetProperties(QuartzProperties));
-
-            // Schedule Job
-            ScheduleJob();
-            Sleep(2);
-
-            // Assert
-            TestTriggerListener.Verify(m => m.TriggerComplete(It.IsAny<ITrigger>(), It.IsAny<IJobExecutionContext>(),
-                It.IsAny<SchedulerInstruction>(), It.IsAny<CancellationToken>()), Times.Never);
         }
     }
 }

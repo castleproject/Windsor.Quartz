@@ -6,11 +6,11 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
 {
     public interface ITestJob : IJob, IDisposable
     {
-    }
 
+    }
     public class TestJob : ITestJob
     {
-        public static bool IsDisposed;
+        public static bool IsDisposed = false;
 
         public void Dispose()
         {

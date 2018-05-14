@@ -7,8 +7,8 @@ namespace Castle.Facilities.Quartz.SampleApp.Listeners
 {
     public interface ISampleTriggerListener : ITriggerListener
     {
-    }
 
+    }
     public class SampleTriggerListener : ISampleTriggerListener
     {
         /// <summary>
