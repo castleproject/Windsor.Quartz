@@ -50,9 +50,15 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
         public void TestJobListener()
         {
             // Add Quartz
-            _container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(_container.Resolve<ITestJobListener>()))
-                    .SetProperties(QuartzProperties));
+            _container.AddFacility<QuartzFacility>(f =>
+            {
+                f.JobListeners = new[]
+                    {
+                        new JobListener(_container.Resolve<ITestJobListener>())
+                    };
+                f.Properties = QuartzProperties;
+            });
+        
 
             // Schedule Job
             ScheduleJob();
@@ -67,9 +73,15 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
         public void TestJobDisposing()
         {
             // Add Quartz
-            _container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(_container.Resolve<ITestJobListener>()))
-                    .SetProperties(QuartzProperties));
+            _container.AddFacility<QuartzFacility>(f =>
+            {
+                f.JobListeners = new[]
+                    {
+                        new JobListener(_container.Resolve<ITestJobListener>())
+                    };
+                f.Properties = QuartzProperties;
+            });
+                
 
             // Schedule Job
             ScheduleJob();

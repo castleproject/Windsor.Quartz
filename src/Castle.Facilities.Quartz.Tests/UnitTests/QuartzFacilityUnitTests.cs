@@ -143,9 +143,15 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void GlobalJobListenerFired()
         {
             // Add Quartz (with 1 joblistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>()))
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            {
+                f.JobListeners = new[]
+                {
+                    new JobListener(Container.Resolve<IJobListener>())
+                };
+
+                f.Properties = QuartzProperties;
+            });
 
             // Schedule Job
             ScheduleJob();
@@ -160,9 +166,16 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void JobListenerFired()
         {
             // Add Quartz (with 1 joblistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[] { KeyMatcher<JobKey>.KeyEquals(new JobKey("TestJob", "TestGroup")) }))
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            {
+                f.JobListeners = new[]
+                {
+                    new JobListener(Container.Resolve<IJobListener>(),
+                        new IMatcher<JobKey>[] {KeyMatcher<JobKey>.KeyEquals(new JobKey("TestJob", "TestGroup"))})
+                };
+
+                f.Properties = QuartzProperties;
+            });
 
             // Schedule Job
             ScheduleJob();
@@ -178,9 +191,19 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void JobListenerNotFired()
         {
             // Add Quartz (with 1 joblistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[] { KeyMatcher<JobKey>.KeyEquals(new JobKey("FakeJob", "FakeGroup")) }))
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            {
+                f.JobListeners = new[]
+                {
+                    new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[]
+                    {
+                        KeyMatcher<JobKey>.KeyEquals(new JobKey("FakeJob", "FakeGroup"))
+                    })
+                };
+
+                f.Properties = QuartzProperties;
+            });
+                
 
             // Schedule Job
             ScheduleJob();
@@ -194,9 +217,15 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void GlobalTriggerListenerFired()
         {
             // Add Quartz (with 1 triggerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>()))
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            {
+                f.TriggerListeners = new[] {
+                    new TriggerListener(Container.Resolve<ITriggerListener>())
+                };
+
+                f.Properties = QuartzProperties;
+            });
+                
 
             // Schedule Job
             ScheduleJob();
@@ -211,11 +240,21 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void TriggerListenerFired()
         {
             // Add Quartz (with 1 triggerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>(), new IMatcher<TriggerKey>[] { KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("TestJob_Trigger1", "TestGroup")) }))
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            { 
+                f.TriggerListeners = new[]
+                {
+                    new TriggerListener(Container.Resolve<ITriggerListener>(),
+                        new IMatcher<TriggerKey>[]
+                        {
+                            KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("TestJob_Trigger1", "TestGroup"))
+                        })
+                };
 
-            // Schedule Job
+                f.Properties = QuartzProperties;
+        });
+
+        // Schedule Job
             ScheduleJob();
             Sleep(2);
 
@@ -228,9 +267,19 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void TriggerListenerNotFired()
         {
             // Add Quartz (with 1 triggerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetTriggerListeners(new TriggerListener(Container.Resolve<ITriggerListener>(), new IMatcher<TriggerKey>[] { KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("FakeTrigger", "FakeGroup")) }))
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            {
+                f.TriggerListeners = new[]
+                {
+                    new TriggerListener(Container.Resolve<ITriggerListener>(),
+                        new IMatcher<TriggerKey>[]
+                        {
+                            KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("FakeTrigger", "FakeGroup"))
+                        })
+                };
+                f.Properties = QuartzProperties;
+            });
+                
 
             // Schedule Job
             ScheduleJob();
@@ -245,12 +294,18 @@ namespace Castle.Facilities.Quartz.Tests.UnitTests
         public void SchedulerListenerFired()
         {
             // Add Quartz (with 1 schedulerlistener)
-            Container.AddFacility<QuartzFacility>(q =>
-                q.SetSchedulerListeners(Container.Resolve<ISchedulerListener>())
-                    .SetProperties(QuartzProperties));
+            Container.AddFacility<QuartzFacility>(f =>
+            {
+                f.SchedulerListeners = new[]
+                {
+                    Container.Resolve<ISchedulerListener>()
+                };
 
-            // Schedule Job
-            ScheduleJob();
+                f.Properties = QuartzProperties;
+            });
+
+        // Schedule Job
+        ScheduleJob();
             Sleep(2);
 
             // Assert

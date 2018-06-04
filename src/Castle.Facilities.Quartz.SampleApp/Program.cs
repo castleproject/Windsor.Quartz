@@ -31,23 +31,36 @@ namespace Castle.Facilities.Quartz.SampleApp
                 container.Register(Component.For<SampleJob>().ImplementedBy<SampleJob>());
 
                 // Add facilities
-                container.AddFacility<QuartzFacility>(q =>
-                    q
-                        .SetProperties(new Dictionary<string, string>
-                        {
-                            {"quartz.scheduler.instanceName", "QuartzSchedulerConfiguredByCode"},
-                            {"quartz.threadPool.type", "Quartz.Simpl.DefaultThreadPool, Quartz"},
-                            {"quartz.threadPool.threadCount", "5"},
+                container.AddFacility<QuartzFacility>(f =>
+                    {
+                        f.Properties = new Dictionary<string, string>
                             {
-                                "quartz.plugin.xml.type",
-                                "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins"
-                            },
-                            {"quartz.plugin.xml.scanInterval", "10"},
-                            {"quartz.plugin.xml.fileNames", "~/quartz_jobs.xml"}
-                        })
-                        .SetJobListeners(new JobListener(container.Resolve<ISampleJobListener>()))
-                        .SetTriggerListeners(new TriggerListener(container.Resolve<ISampleTriggerListener>()))
-                        .SetSchedulerListeners(container.Resolve<ISampleSchedulerListener>())
+                                {"quartz.scheduler.instanceName", "QuartzSchedulerConfiguredByCode"},
+                                {"quartz.threadPool.type", "Quartz.Simpl.DefaultThreadPool, Quartz"},
+                                {"quartz.threadPool.threadCount", "5"},
+                                {
+                                    "quartz.plugin.xml.type",
+                                    "Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins"
+                                },
+                                {"quartz.plugin.xml.scanInterval", "10"},
+                                {"quartz.plugin.xml.fileNames", "~/quartz_jobs.xml"}
+                            };
+
+                        f.JobListeners = new[]
+                        {
+                            new JobListener(container.Resolve<ISampleJobListener>())
+                        };
+
+                        f.TriggerListeners = new[]
+                        {
+                            new TriggerListener(container.Resolve<ISampleTriggerListener>())
+                        };
+
+                        f.SchedulerListeners = new[]
+                        {
+                            container.Resolve<ISampleSchedulerListener>()
+                        };
+                    }
                 );
 
                 Console.WriteLine("Started");
@@ -72,9 +85,9 @@ namespace Castle.Facilities.Quartz.SampleApp
 
                 // Add facilities
                 container.AddFacility<StartableFacility>();
-                container.AddFacility<QuartzFacility>(q =>
-                    q
-                        .SetProperties(new Dictionary<string, string>
+                container.AddFacility<QuartzFacility>(f =>
+                    {
+                        f.Properties = new Dictionary<string, string>
                         {
                             {"quartz.scheduler.instanceName", "QuartzSchedulerConfiguredByCode"},
                             {"quartz.threadPool.type", "Quartz.Simpl.DefaultThreadPool, Quartz"},
@@ -85,10 +98,23 @@ namespace Castle.Facilities.Quartz.SampleApp
                             },
                             {"quartz.plugin.xml.scanInterval", "10"},
                             {"quartz.plugin.xml.fileNames", "~/quartz_jobs.xml"}
-                        })
-                        .SetJobListeners(new JobListener(container.Resolve<ISampleJobListener>()))
-                        .SetTriggerListeners(new TriggerListener(container.Resolve<ISampleTriggerListener>()))
-                        .SetSchedulerListeners(container.Resolve<ISampleSchedulerListener>())
+                        };
+
+                        f.JobListeners = new[]
+                        {
+                            new JobListener(container.Resolve<ISampleJobListener>())
+                        };
+
+                        f.TriggerListeners = new[] 
+                        {
+                                new TriggerListener(container.Resolve<ISampleTriggerListener>())
+                        };
+
+                        f.SchedulerListeners = new[]
+                        {
+                            container.Resolve<ISampleSchedulerListener>()
+                        };
+                    }
                 );
 
                 Console.WriteLine("Started");

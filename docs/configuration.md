@@ -11,15 +11,15 @@ You are not forced to use the StartableFacility. In case you don't want to use t
 ```csharp
 var container = new WindsorContainer();
 container.AddFacility<StartableFacility>(f => f.DeferredStart());
-container.AddFacility<QuartzFacility>(q =>
-	q
-		.SetProperties(new Dictionary<string, string>
+container.AddFacility<QuartzFacility>(f =>
+{
+	f.Properties = new Dictionary<string, string>
 		{
 			{"quartz.scheduler.instanceName", "QuartzSchedulerConfiguredByCode"},
 			{"quartz.threadPool.type", "Quartz.Simpl.DefaultThreadPool, Quartz"},
 			{"quartz.threadPool.threadCount", "5"}
-		})
-);
+		};
+});
 ```
 
 ### Configuring the facility using quartz properties (app.config)
@@ -58,15 +58,26 @@ Use following code sample:
 
 ```csharp
 var container = new WindsorContainer();
-container.AddFacility<QuartzFacility>(q =>
-	q
-		.SetJobListeners(new JobListener(container.Resolve<ISampleJobListener>()))
-		.SetTriggerListeners(new TriggerListener(container.Resolve<ISampleTriggerListener>()))
-		.SetSchedulerListeners(container.Resolve<ISampleSchedulerListener>())
-);
+container.AddFacility<QuartzFacility>(f =>
+{
+	f.JobListeners = new[] 
+	{ 
+		new JobListener(container.Resolve<ISampleJobListener>()) 
+	};
+	
+	f.TriggerListeners = new[]
+	{
+		new TriggerListener(container.Resolve<ISampleTriggerListener>())
+	};
+	
+	f.SchedulerListeners = new[] 
+	{
+		container.Resolve<ISampleSchedulerListener>()
+	};
+});
 ```
 
-The SetJobListeners en SetTriggerListeners-methods have also a second parameter to restrict the execution of the listener for certain jobs or triggers.
+Job -and TriggerListeners its execution can be restricted to some triggers/jobs by using the KeyMatcher class, which implements the IMatcher<T> interface.
 ```csharp
 	q
 		.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[] { KeyMatcher<JobKey>.KeyEquals(new JobKey("OnlyListenToJob1", "JobGroup")) }))
@@ -75,7 +86,7 @@ The SetJobListeners en SetTriggerListeners-methods have also a second parameter 
 
 
 ## Configuring Quartz.NET jobs (quartz_jobs.xml)
-You can use the XMLSchedulingDataProcessorPlugin to schedule jobs with triggers.
+You can use the XMLSchedulingDataProcessorPlugin to schedule jobs with triggers without writing C# code.
 
 - Create an xml quartz_jobs.xml :
 

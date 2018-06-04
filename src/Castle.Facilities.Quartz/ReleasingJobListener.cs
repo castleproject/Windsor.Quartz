@@ -15,7 +15,7 @@ namespace Castle.Facilities.Quartz
         private readonly IKernel _kernel;
 
         /// <summary>
-        ///     JobListener that will release Jobs out of the Kernel
+        /// JobListener that will release Jobs out of the Kernel
         /// </summary>
         /// <param name="kernel">Windsor Kernel</param>
         public ReleasingJobListener(IKernel kernel)
@@ -24,10 +24,10 @@ namespace Castle.Facilities.Quartz
         }
 
         /// <summary>
-        ///     Called by the <see cref="T:Quartz.IScheduler" /> when a <see cref="T:Quartz.IJobDetail" />
-        ///     was about to be executed (an associated <see cref="T:Quartz.ITrigger" />
-        ///     has occurred), but a <see cref="T:Quartz.ITriggerListener" /> vetoed it's
-        ///     execution.
+        /// Called by the <see cref="T:Quartz.IScheduler" /> when a <see cref="T:Quartz.IJobDetail" />
+        /// was about to be executed (an associated <see cref="T:Quartz.ITrigger" />
+        /// has occurred), but a <see cref="T:Quartz.ITriggerListener" /> vetoed it's
+        /// execution.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="token">The token.</param>
@@ -41,13 +41,13 @@ namespace Castle.Facilities.Quartz
         }
 
         /// <summary>
-        ///     Called by the <see cref="T:Quartz.IScheduler" /> when a <see cref="T:Quartz.IJobDetail" />
-        ///     is about to be executed (an associated <see cref="T:Quartz.ITrigger" />
-        ///     has occurred).
-        ///     <para>
-        ///         This method will not be invoked if the execution of the Job was vetoed
-        ///         by a <see cref="T:Quartz.ITriggerListener" />.
-        ///     </para>
+        /// Called by the <see cref="T:Quartz.IScheduler" /> when a <see cref="T:Quartz.IJobDetail" />
+        /// is about to be executed (an associated <see cref="T:Quartz.ITrigger" />
+        /// has occurred).
+        /// <para>
+        /// This method will not be invoked if the execution of the Job was vetoed
+        /// by a <see cref="T:Quartz.ITriggerListener" />.
+        /// </para>
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="token">The token.</param>
@@ -61,9 +61,9 @@ namespace Castle.Facilities.Quartz
         }
 
         /// <summary>
-        ///     Called by the <see cref="T:Quartz.IScheduler" /> after a <see cref="T:Quartz.IJobDetail" />
-        ///     has been executed, and be for the associated <see cref="T:Quartz.Spi.IOperableTrigger" />'s
-        ///     <see cref="M:Quartz.Spi.IOperableTrigger.Triggered(Quartz.ICalendar)" /> method has been called.
+        /// Called by the <see cref="T:Quartz.IScheduler" /> after a <see cref="T:Quartz.IJobDetail" />
+        /// has been executed, and be for the associated <see cref="T:Quartz.Spi.IOperableTrigger" />'s
+        /// <see cref="M:Quartz.Spi.IOperableTrigger.Triggered(Quartz.ICalendar)" /> method has been called.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="jobException">The job exception.</param>
@@ -76,10 +76,13 @@ namespace Castle.Facilities.Quartz
             await Task.Run(() => _kernel.ReleaseComponent(context.JobInstance), token);
         }
 
-        /// <inheritdoc />
         /// <summary>
-        ///     Get the name of the <see cref="T:Quartz.IJobListener" />.
+        /// Get the name of the <see cref="T:Quartz.IJobListener" />.
         /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
+        /// <inheritdoc />
         public virtual string Name => GetType().FullName;
     }
 }

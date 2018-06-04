@@ -13,39 +13,33 @@ namespace Castle.Facilities.Quartz
     /// <seealso cref="Castle.MicroKernel.Facilities.AbstractFacility" />
     public class QuartzFacility : AbstractFacility
     {
-        private JobListener[] _jobListeners;
-        private IDictionary<string, string> _properties;
-        private IDictionary<string, object> _schedulerContext;
-        private ISchedulerListener[] _schedulerListeners;
-        private TriggerListener[] _triggerListeners;
-
         protected override void Init()
         {
             AddComponent<FileScanJob>();
             AddComponent<IJobFactory, JobFactory>();
             AddComponent<IReleasingJobListener, ReleasingJobListener>();
-            AddComponent<IScheduler, Scheduler>((k, p) => p["props"] = _properties ?? new Dictionary<string, string>());
+            AddComponent<IScheduler, Scheduler>((k, p) => p["props"] = Properties ?? new Dictionary<string, string>());
 
             // Configure Schedule Context
             var scheduler = Kernel.Resolve<IScheduler>();
 
-            if (_schedulerContext != null)
-                foreach (var scheduleContextEntry in _schedulerContext)
+            if (SchedulerContext != null)
+                foreach (var scheduleContextEntry in SchedulerContext)
                     scheduler.Context.Add(scheduleContextEntry.Key, scheduleContextEntry.Value);
 
             // Configure global trigger listeners
-            if (_triggerListeners != null)
-                foreach (var triggerListener in _triggerListeners)
+            if (TriggerListeners != null)
+                foreach (var triggerListener in TriggerListeners)
                     scheduler.ListenerManager.AddTriggerListener(triggerListener.Listener, triggerListener.Matchers);
 
             // Configure global job listeners
-            if (_jobListeners != null)
-                foreach (var jobListener in _jobListeners)
+            if (JobListeners != null)
+                foreach (var jobListener in JobListeners)
                     scheduler.ListenerManager.AddJobListener(jobListener.Listener, jobListener.Matchers);
 
             // Configure scheduler listeners
-            if (_schedulerListeners != null)
-                foreach (var scheduleListener in _schedulerListeners)
+            if (SchedulerListeners != null)
+                foreach (var scheduleListener in SchedulerListeners)
                     scheduler.ListenerManager.AddSchedulerListener(scheduleListener);
         }
 
@@ -88,35 +82,12 @@ namespace Castle.Facilities.Quartz
 
         #region Configure facility
 
-        public QuartzFacility SetJobListeners(params JobListener[] jobListeners)
-        {
-            _jobListeners = jobListeners;
-            return this;
-        }
+        public JobListener[] JobListeners { get; set; }
+        public TriggerListener[] TriggerListeners { get; set; }
+        public ISchedulerListener[] SchedulerListeners { get; set; }
+        public IDictionary<string, string> Properties { get; set; }
 
-        public QuartzFacility SetTriggerListeners(params TriggerListener[] triggerListeners)
-        {
-            _triggerListeners = triggerListeners;
-            return this;
-        }
-
-        public QuartzFacility SetSchedulerListeners(params ISchedulerListener[] schedulerListeners)
-        {
-            _schedulerListeners = schedulerListeners;
-            return this;
-        }
-
-        public QuartzFacility SetProperties(IDictionary<string, string> properties)
-        {
-            _properties = properties;
-            return this;
-        }
-
-        public QuartzFacility SetSchedulerContext(IDictionary<string, object> schedulerContext)
-        {
-            _schedulerContext = schedulerContext;
-            return this;
-        }
+        public IDictionary<string, object> SchedulerContext { get; set; }
 
         #endregion Configure facility
     }

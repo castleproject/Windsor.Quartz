@@ -10,7 +10,7 @@ namespace Castle.Facilities.Quartz.Tests.IntegrationTests
     }
     public class TestJob : ITestJob
     {
-        public static bool IsDisposed = false;
+        public static bool IsDisposed;
 
         public void Dispose()
         {
