@@ -13,8 +13,8 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <AssemblyName>Castle.Facilities.Quartz</AssemblyName>
     <RootNamespace>Castle.Facilities.Quartz</RootNamespace>
-    <AssemblyVersion>0.5.0.0</AssemblyVersion>
-    <FileVersion>0.5.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
     <Authors>Castle Project Contributors</Authors>
     <Copyright>Copyright (c) 2009-2018 Castle Project - http://www.castleproject.org/</Copyright>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</PackageLicenseUrl>
@@ -22,7 +22,7 @@
     <RepositoryUrl>https://github.com/castleproject/Castle.Facilities.Quartz</RepositoryUrl>
     <PackageIconUrl>http://www.castleproject.org/img/windsor-logo.png</PackageIconUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <Version>0.5.0</Version>
+    <Version>1.0.0</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
@@ -32,8 +32,8 @@
     <PackageReference Include="Common.Logging" version="3.4.1" />
     <PackageReference Include="Common.Logging.Core" version="3.4.1" />
     <PackageReference Include="Microsoft.CSharp" version="4.4.1" />
-    <PackageReference Include="Quartz" version="3.0.2" />
-    <PackageReference Include="Quartz.Jobs" version="3.0.2" />
-    <PackageReference Include="Quartz.Plugins" version="3.0.2" />
+    <PackageReference Include="Quartz" version="3.0.4" />
+    <PackageReference Include="Quartz.Jobs" version="3.0.4" />
+    <PackageReference Include="Quartz.Plugins" version="3.0.4" />
   </ItemGroup>
 </Project>

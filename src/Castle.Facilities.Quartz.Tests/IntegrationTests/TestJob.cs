@@ -2,12 +2,19 @@
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp
+namespace Castle.Facilities.Quartz.Tests.IntegrationTests
 {
-    public class SampleJob : IJob, IDisposable
+    public interface ITestJob : IJob, IDisposable
     {
+
+    }
+    public class TestJob : ITestJob
+    {
+        public static bool IsDisposed;
+
         public void Dispose()
         {
+            IsDisposed = true;
             Console.WriteLine("disposing...");
         }
 

@@ -3,14 +3,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp
+namespace Castle.Facilities.Quartz.Tests.IntegrationTests
 {
-    public class SampleJobListener : IJobListener
+    public interface ITestJobListener : IJobListener
     {
-        public SampleJobListener()
+        bool HasFiredJobWasExecuted { get; set; }
+    }
+
+    public class TestJobListener : ITestJobListener
+    {
+        public TestJobListener()
         {
             Name = GetType().Name;
         }
+
+        public bool HasFiredJobWasExecuted { get; set; }
 
         public async Task JobToBeExecuted(IJobExecutionContext context,
             CancellationToken token = default(CancellationToken))
@@ -27,6 +34,7 @@ namespace Castle.Facilities.Quartz.SampleApp
         public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException,
             CancellationToken token = default(CancellationToken))
         {
+            HasFiredJobWasExecuted = true;
             await WriteMesssage("JobWasExecuted", token);
         }
 

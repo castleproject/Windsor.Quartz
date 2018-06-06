@@ -3,9 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp
+namespace Castle.Facilities.Quartz.SampleApp.Listeners
 {
-    public class SampleSchedulerListener : ISchedulerListener
+    public interface ISampleSchedulerListener : ISchedulerListener
+    {
+    }
+
+    public class SampleSchedulerListener : ISampleSchedulerListener
     {
         public async Task JobScheduled(ITrigger trigger, CancellationToken token = default(CancellationToken))
         {

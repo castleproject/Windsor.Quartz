@@ -3,9 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 
-namespace Castle.Facilities.Quartz.SampleApp
+namespace Castle.Facilities.Quartz.SampleApp.Listeners
 {
-    public class SampleTriggerListener : ITriggerListener
+    public interface ISampleTriggerListener : ITriggerListener
+    {
+
+    }
+    public class SampleTriggerListener : ISampleTriggerListener
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="SampleTriggerListener" /> class.

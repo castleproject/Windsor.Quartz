@@ -1,7 +1,94 @@
-# Quartz.NET Facility Configuration
+# Quartz.NET Facility
+
+## Using the C# API
+
+### Configuring the facility using quartz properties (C#)
+
+By using following code sample, you will configure the scheduler with Quartz properties provided by code.
+You don't need Quartz properties in the app.config for this way of working.
+You are not forced to use the StartableFacility. In case you don't want to use the StartableFacility, you need to call the IScheduler.Start() method to start your scheduler manually.
+
+```csharp
+var container = new WindsorContainer();
+container.AddFacility<StartableFacility>(f => f.DeferredStart());
+container.AddFacility<QuartzFacility>(f =>
+{
+	f.Properties = new Dictionary<string, string>
+		{
+			{"quartz.scheduler.instanceName", "QuartzSchedulerConfiguredByCode"},
+			{"quartz.threadPool.type", "Quartz.Simpl.DefaultThreadPool, Quartz"},
+			{"quartz.threadPool.threadCount", "5"}
+		};
+});
+```
+
+### Configuring the facility using quartz properties (app.config)
+
+By using following code sample, you will configure the scheduler with Quartz properties provided in the app.config.
+You only need to add the facility to the container. The Quartz properties will be retrieved from the app.config automatically
+You are not forced to use the StartableFacility. In case you don't want to use the StartableFacility, you need to call the IScheduler.Start() method to start your scheduler manually.
+
+```csharp
+var container = new WindsorContainer();
+container.AddFacility<StartableFacility>(f => f.DeferredStart());
+container.AddFacility<QuartzFacility>();
+```
+
+Add this configuration to the app.config xml file:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="quartz" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0,Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  </configSections>
+  <quartz>
+    <add key="quartz.scheduler.instanceName" value="JobScheduler"/>
+    <add key="quartz.jobStore.type" value=" Quartz.Simpl.RAMJobStore, Quartz"/>
+    <add key="quartz.threadPool.threadCount" value="5"/>
+  </quartz>
+</configuration>
+```
+
+
+### Attaching job-, trigger- and scheduler-listeners
+
+You can attach job-, trigger- and schedulerlisteners by the C# API
+Use following code sample:
+
+```csharp
+var container = new WindsorContainer();
+container.AddFacility<QuartzFacility>(f =>
+{
+	f.JobListeners = new[] 
+	{ 
+		new JobListener(container.Resolve<ISampleJobListener>()) 
+	};
+	
+	f.TriggerListeners = new[]
+	{
+		new TriggerListener(container.Resolve<ISampleTriggerListener>())
+	};
+	
+	f.SchedulerListeners = new[] 
+	{
+		container.Resolve<ISampleSchedulerListener>()
+	};
+});
+```
+
+Job -and TriggerListeners its execution can be restricted to some triggers/jobs by using the KeyMatcher class, which implements the IMatcher<T> interface.
+```csharp
+	q
+		.SetJobListeners(new JobListener(Container.Resolve<IJobListener>(), new IMatcher<JobKey>[] { KeyMatcher<JobKey>.KeyEquals(new JobKey("OnlyListenToJob1", "JobGroup")) }))
+```
+
+
 
 ## Configuring Quartz.NET jobs (quartz_jobs.xml)
-Integration is achieved through a Windsor Facility. Currently, the only way to configure this facility is using XML configuration. Jobs are usually registered and configured in Quartz using the quartz_jobs.xml file. For example:
+You can use the XMLSchedulingDataProcessorPlugin to schedule jobs with triggers without writing C# code.
+
+- Create an xml quartz_jobs.xml :
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -33,89 +120,9 @@ Integration is achieved through a Windsor Facility. Currently, the only way to c
 </job-scheduling-data>
 ```
 
-## Configuring facility
-
-### Basic configuration
-
-The job class (in this case `SampleJob`) type needs to be registered as a component in Castle Windsor. Then, Quartz parameters have to be defined in the facility configuration, for example:
-
+- Add following quartz properties to the facility through the C# API or add them in the app.config:
 ```xml
-<castle>
-  <facilities>
-    <facility id="startable.facility" type="Castle.Facilities.Startable.StartableFacility, Castle.Windsor" />
-    <facility id="quartznet" type="Castle.Facilities.Quartz.QuartzFacility, Castle.Facilities.Quartz">
-      <quartz>
-        <item key="quartz.scheduler.instanceName">XmlConfiguredInstance</item>
-        <item key="quartz.threadPool.type">Quartz.Simpl.DefaultThreadPool, Quartz</item>
-        <item key="quartz.threadPool.threadCount">5</item>
-        <item key="quartz.plugin.xml.type">Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins</item>
-        <item key="quartz.plugin.xml.scanInterval">10</item>
-        <item key="quartz.plugin.xml.fileNames">~/quartz_jobs.xml</item>
-      </quartz>
-    </facility>
-  </facilities>
-</castle>
+    <add key="quartz.plugin.xml.type" value="Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins" />
+    <add key="quartz.plugin.xml.scanInterval" value="10" />
+    <add key="quartz.plugin.xml.fileNames" value="~/quartz_jobs.xml" />
 ```
-
-Note the use of the Startable Facility, it lets the Quartz scheduler start automatically.
-
-### Configuration with listeners
-
-The facility also lets Castle Windsor configure Quartz listeners. 
-To do this you have to register your listeners as components, then reference them **by component name** in the facility configuration. 
-Here's a sample facility configuration enhanced with several listeners:
-
-```xml
-<castle>
-  <facilities>
-    <facility id="startable.facility" type="Castle.Facilities.Startable.StartableFacility, Castle.Windsor" />
-    <facility id="quartznet" type="Castle.Facilities.Quartz.QuartzFacility, Castle.Facilities.Quartz">
-      <globalJobListeners>
-        <item>${globalJobListener}</item>
-      </globalJobListeners>
-      <globalTriggerListeners>
-        <item>${globalTriggerListener}</item>
-      </globalTriggerListeners>
-      <schedulerListeners>
-        <item>${sampleSchedulerListener}</item>
-      </schedulerListeners>
-      <jobListeners>
-        <job name="hello-world">
-          <listener>${sampleJobListener}</listener>
-        </job>
-      </jobListeners>
-      <triggerListeners>
-        <trigger name="sample-trigger">
-          <listener>${sampleTriggerListener}</listener>
-        </trigger>
-      </triggerListeners>
-      <quartz>
-        <item key="quartz.scheduler.instanceName">XmlConfiguredInstance</item>
-        <item key="quartz.threadPool.type">Quartz.Simpl.DefaultThreadPool, Quartz</item>
-        <item key="quartz.threadPool.threadCount">5</item>
-        <item key="quartz.plugin.xml.type">Quartz.Plugin.Xml.XMLSchedulingDataProcessorPlugin, Quartz.Plugins</item>
-        <item key="quartz.plugin.xml.scanInterval">10</item>
-        <item key="quartz.plugin.xml.fileNames">~/quartz_jobs.xml</item>
-      </quartz>
-    </facility>
-  </facilities>
-  <components>
-    <component id="globalJobListener" type="Castle.Facilities.Quartz.SampleApp.SampleJobListener, Castle.Facilities.Quartz.SampleApp">
-      <parameters>
-        <name>Global job listener</name>
-      </parameters>
-    </component>
-    <component id="sampleJobListener" type="Castle.Facilities.Quartz.SampleApp.SampleJobListener, Castle.Facilities.Quartz.SampleApp" />
-    <component id="globalTriggerListener" type="Castle.Facilities.Quartz.SampleApp.SampleTriggerListener, Castle.Facilities.Quartz.SampleApp">
-      <parameters>
-        <name>Global trigger listener</name>
-      </parameters>
-    </component>
-    <component id="sampleTriggerListener" type="Castle.Facilities.Quartz.SampleApp.SampleTriggerListener, Castle.Facilities.Quartz.SampleApp" />
-    <component id="sampleSchedulerListener" type="Castle.Facilities.Quartz.SampleApp.SampleSchedulerListener, Castle.Facilities.Quartz.SampleApp" />
-    <component id="sampleJob" type="Castle.Facilities.Quartz.SampleApp.SampleJob, Castle.Facilities.Quartz.SampleApp" />
-  </components>
-</castle>
-```
-
-Note that to associate a listeners with a particular job or trigger, the Quartz job or trigger name is used, and not the job's component name.

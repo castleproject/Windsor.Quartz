@@ -6,11 +6,11 @@ using Quartz;
 namespace Castle.Facilities.Quartz
 {
     /// <summary>
-    /// JobListener that will release Jobs out of the Kernel
+    ///     JobListener that will release Jobs out of the Kernel
     /// </summary>
     /// <seealso cref="IJobListener" />
     /// <inheritdoc />
-    public class ReleasingJobListener : IJobListener
+    public class ReleasingJobListener : IReleasingJobListener
     {
         private readonly IKernel _kernel;
 
@@ -76,10 +76,13 @@ namespace Castle.Facilities.Quartz
             await Task.Run(() => _kernel.ReleaseComponent(context.JobInstance), token);
         }
 
-        /// <inheritdoc />
         /// <summary>
         /// Get the name of the <see cref="T:Quartz.IJobListener" />.
         /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
+        /// <inheritdoc />
         public virtual string Name => GetType().FullName;
     }
 }
